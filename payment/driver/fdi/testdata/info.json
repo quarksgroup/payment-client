@@ -1,0 +1,20 @@
+{
+  "status": "success",
+  "data": {
+    "id": "7ccbde9b-0052-417c-6ec3-e72e37e31ab6",
+    "trxRef": "19567751-F53B-4B15-A4B4",
+    "trxType": "cashin",
+    "channelRef": "1605754505",
+    "channelId": "momo-mtn-rw",
+    "channelMsg": "Transaction successful",
+    "channelTrxStatus": "SUCCESSFUL",
+    "channelStatusCode": 500,
+    "msisdn": "250784441129",
+    "amount": 100,
+    "trxFees": 2,
+    "currency": "RWF",
+    "trxStatus": "successful",
+    "createdAt": "2019-04-04 17:15:59",
+    "callback": "https://test-callback.io"
+  }
+}
