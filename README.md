@@ -1,3 +1,5 @@
+![Test](https://github.com/quarksgroup/payment-client/workflows/Test/badge.svg)
+![Lint](https://github.com/quarksgroup/payment-client/workflows/Lint/badge.svg)
 # payments-client
 
 ## Goal(s)
