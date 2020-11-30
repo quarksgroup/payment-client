@@ -6,6 +6,12 @@ import (
 	"github.com/quarksgroup/payment-client/payment"
 )
 
+// FDI Supported providers
+const (
+	MTN    payment.Provider = "momo-mtn-rw"
+	Airtel payment.Provider = "momo-airtel-rw"
+)
+
 type paymentsService struct {
 	client *wrapper
 }
@@ -16,7 +22,7 @@ func (s *paymentsService) Pull(ctx context.Context, py *payment.Payment) (*payme
 		Ref:      py.ID,
 		MSISDN:   py.Wallet,
 		Amount:   py.Amount,
-		Channel:  py.Wallet,
+		Channel:  string(py.Provider),
 		Callback: s.client.ReportURL.String(),
 	}
 	out := new(paymentResponse)
@@ -30,7 +36,7 @@ func (s *paymentsService) Push(ctx context.Context, py *payment.Payment) (*payme
 		Ref:      py.ID,
 		MSISDN:   py.Wallet,
 		Amount:   py.Amount,
-		Channel:  py.Wallet,
+		Channel:  string(py.Provider),
 		Callback: s.client.ReportURL.String(),
 	}
 	out := new(paymentResponse)

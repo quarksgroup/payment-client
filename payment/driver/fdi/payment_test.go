@@ -17,9 +17,10 @@ func TestPull(t *testing.T) {
 	defer gock.Off()
 
 	py := &payment.Payment{
-		ID:     "xxxx",
-		Amount: 1000,
-		Wallet: "xxxx",
+		ID:       "xxxx",
+		Amount:   1000,
+		Wallet:   "xxxx",
+		Provider: MTN,
 	}
 
 	gock.New("https://payments-api.fdibiz.com/v2").
@@ -47,9 +48,10 @@ func TestPush(t *testing.T) {
 	defer gock.Off()
 
 	py := &payment.Payment{
-		ID:     "xxxx",
-		Amount: 1000,
-		Wallet: "xxxx",
+		ID:       "xxxx",
+		Amount:   1000,
+		Wallet:   "xxxx",
+		Provider: MTN,
 	}
 
 	gock.New("https://payments-api.fdibiz.com/v2").
