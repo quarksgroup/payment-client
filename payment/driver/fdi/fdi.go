@@ -20,11 +20,11 @@ func New(uri, callback string) (*payment.Client, error) {
 	if !strings.HasSuffix(base.Path, "/") {
 		base.Path = base.Path + "/"
 	}
-	report, err := url.Parse(uri)
+	report, err := url.Parse(callback)
 	if err != nil {
 		return nil, err
 	}
-	if !strings.HasSuffix(base.Path, "/") {
+	if !strings.HasSuffix(report.Path, "/") {
 		report.Path = report.Path + "/"
 	}
 
