@@ -24,9 +24,6 @@ func New(uri, callback string) (*payment.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	if !strings.HasSuffix(report.Path, "/") {
-		report.Path = report.Path + "/"
-	}
 
 	client := &wrapper{new(payment.Client)}
 	client.BaseURL = base
