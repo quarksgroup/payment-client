@@ -42,6 +42,7 @@ func convertInfo(info *infoResponse) *payment.Info {
 		ID:        info.Data.Ref,
 		Amount:    info.Data.Amount,
 		Cost:      info.Data.Fees,
+		Status:    info.Data.TrxStatus,
 		Type:      info.Data.Type,
 		CreatedAt: info.Data.CreatedAt,
 	}
