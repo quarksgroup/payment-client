@@ -94,7 +94,7 @@ func (c *Client) Do(ctx context.Context, in *Request) (*Response, error) {
 
 	// dumps the response for debugging purposes.
 	if c.DumpResponse != nil {
-		c.DumpResponse(res, true)
+		_, _ = c.DumpResponse(res, true)
 	}
 
 	return newResponse(res), nil
