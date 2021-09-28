@@ -79,10 +79,9 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 	// if an error is encountered, unmarshal and return the
 	// error response.
 	if res.Status > 299 {
-		err := new(Error)
-		err.Code = res.Status
+		err := new(Err)
 		_ = json.NewDecoder(res.Body).Decode(err)
-		return res, err
+		return res, &payment.Error{Code: res.Status, Message: err.Data.Message}
 	}
 
 	if out == nil {
@@ -95,11 +94,9 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 }
 
 // Error represents a Github error.
-type Error struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
-func (e *Error) Error() string {
-	return e.Message
+type Err struct {
+	Status string `json:"status"`
+	Data   struct {
+		Message string `json:"message"`
+	}
 }
