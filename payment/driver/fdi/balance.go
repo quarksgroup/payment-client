@@ -11,7 +11,6 @@ type BalanceService struct {
 }
 
 func (s *BalanceService) Balance(ctx context.Context) (*payment.Balance, *payment.Response, error) {
-
 	endpoint := "/balance/now"
 	out := new(balanceResponse)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
@@ -24,9 +23,9 @@ type balanceResponse struct {
 	Data   struct {
 		Date     string `json:"date"`
 		Accounts []struct {
-			Currency         string `json:"currency"`
-			BalanceAvailable uint64 `json:"balanceAvailable"`
-			BalanceActual    uint64 `json:"balanceActual"`
+			Currency         string  `json:"currency"`
+			BalanceAvailable float64 `json:"balanceAvailable"`
+			BalanceActual    float64 `json:"balanceActual"`
 		} `json:"accounts"`
 	} `json:"data"`
 }

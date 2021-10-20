@@ -6,9 +6,9 @@ import "context"
 
 // Account  ...
 type Account struct {
-	Currency         string `json:"currency"`
-	BalanceAvailable uint64 `json:"balanceAvailable"`
-	BalanceActual    uint64 `json:"balanceActual"`
+	Currency         string  `json:"currency"`
+	BalanceAvailable float64 `json:"balanceAvailable"`
+	BalanceActual    float64 `json:"balanceActual"`
 }
 
 // Data  ...
