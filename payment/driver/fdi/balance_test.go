@@ -27,8 +27,8 @@ func TestBalance(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(payment.Info)
-	raw, _ := ioutil.ReadFile("testdata/blance.json.golden")
+	want := new(payment.Balance)
+	raw, _ := ioutil.ReadFile("testdata/balance.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

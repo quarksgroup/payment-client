@@ -10,28 +10,27 @@ type BalanceService struct {
 	client *wrapper
 }
 
-func (s *BalanceService) Balance(ctx context.Context) (*payment.Balances, *payment.Response, error) {
-
+func (s *BalanceService) Balance(ctx context.Context) (*payment.Balance, *payment.Response, error) {
 	endpoint := "/balance/now"
-	out := new(BalancesInfo)
+	out := new(balanceResponse)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
-	return convertBal(out), res, err
+	return convertBalance(out), res, err
 
 }
 
-type BalancesInfo struct {
+type balanceResponse struct {
 	Status string `json:"status"`
 	Data   struct {
 		Date     string `json:"date"`
 		Accounts []struct {
-			Currency         string `json:"currency"`
-			BalanceAvailable uint64 `json:"balanceAvailable"`
-			BalanceActual    uint64 `json:"balanceActual"`
+			Currency         string  `json:"currency"`
+			BalanceAvailable float64 `json:"balanceAvailable"`
+			BalanceActual    float64 `json:"balanceActual"`
 		} `json:"accounts"`
 	} `json:"data"`
 }
 
-func convertBal(res *BalancesInfo) *payment.Balances {
+func convertBalance(res *balanceResponse) *payment.Balance {
 
 	data := &payment.Data{
 		Date:     res.Data.Date,
@@ -47,7 +46,7 @@ func convertBal(res *BalancesInfo) *payment.Balances {
 		data.Accounts = append(data.Accounts, *account)
 	}
 
-	return &payment.Balances{
+	return &payment.Balance{
 		Status: res.Status,
 		Data:   *data,
 	}
