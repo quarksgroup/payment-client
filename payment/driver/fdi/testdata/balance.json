@@ -1,0 +1,18 @@
+{
+    "status": "success",
+    "data": {
+        "date": "2019-04-05",
+        "accounts": [
+            {
+                "currency": "RWF",
+                "balanceAvailable": 30000,
+                "balanceActual": 35000
+            },
+            {
+                "currency": "USD",
+                "balanceAvailable": 1200,
+                "balanceActual": 1200
+            }
+        ]
+    }
+}
