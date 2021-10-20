@@ -35,6 +35,7 @@ func New(uri, callback string) (*payment.Client, error) {
 	client.Payments = &paymentsService{client}
 	client.Info = &infoService{client}
 	client.Auth = &authService{client}
+	client.Balances = &BalanceService{client}
 
 	return client.Client, nil
 }

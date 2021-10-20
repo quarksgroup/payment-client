@@ -18,7 +18,7 @@ type Data struct {
 }
 
 // Balance ...
-type Balances struct {
+type Balance struct {
 	Status string `json:"status"`
 	Data   Data   `json:"data"`
 }
@@ -26,5 +26,5 @@ type Balances struct {
 // BalanceService ...
 type BalanceService interface {
 	// Balance returns balanceInfo about it.
-	Balance(context.Context) (*Balances, *Response, error)
+	Balance(context.Context) (*Balance, *Response, error)
 }
