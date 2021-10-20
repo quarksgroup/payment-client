@@ -53,6 +53,9 @@ type Client struct {
 	// Payments pulls and pushes funds from/to the underlying payment Provider/Driver
 	Payments PaymentsService
 
+	// Balances services returns information about account balance balance/now
+	Balances BalanceService
+
 	// Info services returns information about transactions/payments
 	Info InfoService
 	// Auth authenticates our http client against the payment provider.
