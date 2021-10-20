@@ -7,11 +7,6 @@
                 "currency": "RWF",
                 "balanceAvailable": 30000,
                 "balanceActual": 35000
-            },
-            {
-                "currency": "USD",
-                "balanceAvailable": 1200,
-                "balanceActual": 1200
             }
         ]
     }
