@@ -2,6 +2,7 @@ package fdi
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/quarksgroup/payment-client/payment"
 )
@@ -14,6 +15,7 @@ func (s *BalanceService) Balance(ctx context.Context) (*payment.Balance, *paymen
 	endpoint := "/balance/now"
 	out := new(balanceResponse)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
+	fmt.Println(res)
 	return convertBalance(out), res, err
 
 }
