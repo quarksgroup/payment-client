@@ -3,6 +3,7 @@ package payment
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -79,12 +80,12 @@ func (c *Client) Do(ctx context.Context, in *Request) (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	req = req.WithContext(ctx)
 	if in.Header != nil {
 		req.Header = in.Header
 	}
 
+	fmt.Println(req)
 	client := c.Client
 	if client == nil {
 		client = http.DefaultClient

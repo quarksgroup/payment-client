@@ -11,7 +11,7 @@ type BalanceService struct {
 }
 
 func (s *BalanceService) Balance(ctx context.Context) (*payment.Balance, *payment.Response, error) {
-	endpoint := "/balance/now"
+	endpoint := "balance/now"
 	out := new(balanceResponse)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
 	return convertBalance(out), res, err
