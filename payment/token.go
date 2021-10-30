@@ -9,8 +9,12 @@ import (
 // the requests to access protected resources.
 type Token struct {
 	Token   string
-	Refresh string
 	Expires time.Time
+}
+
+// IsExpired returns true if the token is expired.
+func (t *Token) IsExpired() bool {
+	return t.Expires.Before(time.Now())
 }
 
 // TokenKey is the key to use with the context.WithValue
@@ -20,15 +24,6 @@ type TokenKey struct{}
 // TokenSource returns a token.
 type TokenSource interface {
 	Token(context.Context) (*Token, error)
-}
-
-// AuthService handles authentication to the underlying API
-type AuthService interface {
-	// Login with id and secret to the underlying API and get an JWT token
-	Login(context.Context, string, string) (*Token, *Response, error)
-
-	// Refresh the oauth2 token
-	Refresh(ctx context.Context, token *Token, force bool) (*Token, *Response, error)
 }
 
 // WithContext returns a copy of parent in which the token value is set

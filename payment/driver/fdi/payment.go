@@ -19,11 +19,11 @@ type paymentsService struct {
 func (s *paymentsService) Pull(ctx context.Context, py *payment.Payment) (*payment.Status, *payment.Response, error) {
 	endpoint := "momo/pull"
 	in := &paymentRequest{
-		Ref:      py.ID,
-		MSISDN:   py.Wallet,
-		Amount:   py.Amount,
-		Channel:  string(py.Provider),
-		Callback: s.client.ReportURL.String(),
+		Ref:     py.ID,
+		MSISDN:  py.Wallet,
+		Amount:  py.Amount,
+		Channel: string(py.Provider),
+		// Callback: s.client.ReportURL.String(),
 	}
 	out := new(paymentResponse)
 	res, err := s.client.do(ctx, "POST", endpoint, in, out)
@@ -33,11 +33,11 @@ func (s *paymentsService) Pull(ctx context.Context, py *payment.Payment) (*payme
 func (s *paymentsService) Push(ctx context.Context, py *payment.Payment) (*payment.Status, *payment.Response, error) {
 	endpoint := "momo/push"
 	in := &paymentRequest{
-		Ref:      py.ID,
-		MSISDN:   py.Wallet,
-		Amount:   py.Amount,
-		Channel:  string(py.Provider),
-		Callback: s.client.ReportURL.String(),
+		Ref:     py.ID,
+		MSISDN:  py.Wallet,
+		Amount:  py.Amount,
+		Channel: string(py.Provider),
+		// Callback: s.client.ReportURL.String(),
 	}
 	out := new(paymentResponse)
 	res, err := s.client.do(ctx, "POST", endpoint, in, out)

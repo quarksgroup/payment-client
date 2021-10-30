@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"net/url"
 )
 
 var (
@@ -21,6 +20,89 @@ var (
 	// resource.
 	ErrNotAuthorized = errors.New("Not Authorized")
 )
+
+type ClientOption = func(http.RoundTripper) http.RoundTripper
+
+type funcTripper struct {
+	roundTrip func(*http.Request) (*http.Response, error)
+}
+
+func (tr funcTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+	return tr.roundTrip(req)
+}
+
+// CheckToken is a client option tha renew the token if it is expired
+func CheckToken(client *Client, token *Token) ClientOption {
+	return func(tr http.RoundTripper) http.RoundTripper {
+		return &tokenRenewer{
+			client: client,
+			token:  token,
+			rt:     tr,
+		}
+	}
+}
+
+// AddHeader turns a RoundTripper into one that adds a request header
+func AddHeader(name, value string) ClientOption {
+	return func(tr http.RoundTripper) http.RoundTripper {
+		return &funcTripper{roundTrip: func(req *http.Request) (*http.Response, error) {
+			if req.Header.Get(name) == "" {
+				req.Header.Add(name, value)
+			}
+			return tr.RoundTrip(req)
+		}}
+	}
+}
+
+type tokenRenewer struct {
+	token  *Token
+	client *Client
+	rt     http.RoundTripper
+}
+
+func (tr tokenRenewer) RoundTrip(req *http.Request) (*http.Response, error) {
+
+	// check if token is expired
+	// if expired, renew it
+	// if not, use the token
+	if tr.token == nil {
+		token, err := tr.client.RefreshToken(req.Context(), tr.token)
+		if err != nil {
+			return nil, err
+		}
+		tr.token = token
+	}
+	if tr.token.IsExpired() {
+		token, err := tr.client.RefreshToken(req.Context(), tr.token)
+		if err != nil {
+			return nil, err
+		}
+		tr.token = token
+	}
+	req.Header.Set("Authorization", "Bearer "+tr.token.Token)
+
+	return tr.rt.RoundTrip(req)
+}
+
+// Refresh token
+func (c *Client) RefreshToken(ctx context.Context, in *Token) (*Token, error) {
+	return &Token{}, nil
+}
+
+func NewClient(opts ...ClientOption) *Client {
+	client := &Client{http: NewHTTPClient(opts...)}
+	return client
+}
+
+// NewHTTPClient initializes an http.Client
+func NewHTTPClient(opts ...ClientOption) *http.Client {
+
+	tr := http.DefaultTransport
+	for _, opt := range opts {
+		tr = opt(tr)
+	}
+	return &http.Client{Transport: tr}
+}
 
 // Request represents an HTTP request.
 type Request struct {
@@ -40,42 +122,12 @@ type Response struct {
 
 // Client manages communication with a payment gateways API.
 type Client struct {
-	Client *http.Client
-
-	// Base URL for API requests.
-	BaseURL *url.URL
-
-	// ReportURL is the url to callback for payment reports
-	ReportURL *url.URL
-
-	// Driver identifies the payment provider to use
-	Driver Driver
-	// Payments pulls and pushes funds from/to the underlying payment Provider/Driver
-	Payments PaymentsService
-
-	// Balances services returns information about account balance balance/now
-	Balances BalanceService
-
-	// Info services returns information about transactions/payments
-	Info InfoService
-	// Auth authenticates our http client against the payment provider.
-	Auth AuthService
-
-	// DumpResponse optionally specifies a function to
-	// dump the the response body for debugging purposes.
-	// This can be set to httputil.DumpResponse.
-	DumpResponse func(*http.Response, bool) ([]byte, error)
+	http *http.Client
 }
 
 // Do sends an API request and returns the API response.
 func (c *Client) Do(ctx context.Context, in *Request) (*Response, error) {
-	uri, err := c.BaseURL.Parse(in.Path)
-	if err != nil {
-		return nil, err
-	}
-
-	// creates a new http request with context.
-	req, err := http.NewRequest(in.Method, uri.String(), in.Body)
+	req, err := http.NewRequest(in.Method, "TODO", in.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -85,19 +137,9 @@ func (c *Client) Do(ctx context.Context, in *Request) (*Response, error) {
 		req.Header = in.Header
 	}
 
-	client := c.Client
-	if client == nil {
-		client = http.DefaultClient
-	}
-
-	res, err := client.Do(req)
+	res, err := c.http.Do(req)
 	if err != nil {
 		return nil, err
-	}
-
-	// dumps the response for debugging purposes.
-	if c.DumpResponse != nil {
-		_, _ = c.DumpResponse(res, true)
 	}
 
 	return newResponse(res), nil

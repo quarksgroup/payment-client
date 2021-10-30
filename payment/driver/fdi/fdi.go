@@ -20,24 +20,24 @@ func New(uri, callback string) (*payment.Client, error) {
 	if !strings.HasSuffix(base.Path, "/") {
 		base.Path = base.Path + "/"
 	}
-	report, err := url.Parse(callback)
+	_, err = url.Parse(callback)
 	if err != nil {
 		return nil, err
 	}
 
-	client := &wrapper{new(payment.Client)}
-	client.BaseURL = base
-	client.ReportURL = report
+	// client := &wrapper{new(payment.Client)}
+	// client.BaseURL = base
+	// client.ReportURL = report
 
-	client.Driver = payment.DriverFDI
+	// client.Driver = payment.DriverFDI
 
-	// initialize services
-	client.Payments = &paymentsService{client}
-	client.Info = &infoService{client}
-	client.Auth = &authService{client}
-	client.Balances = &BalanceService{client}
+	// // initialize services
+	// client.Payments = &paymentsService{client}
+	// client.Info = &infoService{client}
+	// client.Auth = &authService{client}
+	// client.Balances = &BalanceService{client}
 
-	return client.Client, nil
+	return nil, nil
 }
 
 type wrapper struct {
