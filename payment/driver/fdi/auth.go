@@ -3,6 +3,7 @@ package fdi
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/quarksgroup/payment-client/payment"
 )
@@ -34,12 +35,17 @@ type tokenRequest struct {
 type tokenResponse struct {
 	Success bool `json:"success"`
 	Data    struct {
-		Token string `json:"token"`
+		Token     string `json:"token"`
+		ExpiresAt string `json:"expires_at"`
 	}
 }
 
 func convertToken(tk *tokenResponse) *payment.Token {
+
+	expires, _ := time.Parse("2006-01-02T15:04:05.99999", tk.Data.ExpiresAt)
+
 	return &payment.Token{
-		Token: tk.Data.Token,
+		Token:   tk.Data.Token,
+		Expires: expires,
 	}
 }
