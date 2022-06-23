@@ -8,9 +8,9 @@ import (
 // Token represents the credentials used to authorize
 // the requests to access protected resources.
 type Token struct {
-	Token   string
-	Refresh string
-	Expires time.Time
+	Token   string    `json:"token"`
+	Refresh string    `json:"refresh"`
+	Expires time.Time `json:"expires"`
 }
 
 // TokenKey is the key to use with the context.WithValue
