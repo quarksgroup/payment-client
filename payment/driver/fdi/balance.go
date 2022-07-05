@@ -3,14 +3,14 @@ package fdi
 import (
 	"context"
 
-	"github.com/quarksgroup/payment-client/payment"
+	"github.com/quarksgroup/payment-client/payment/mtn"
 )
 
 type BalanceService struct {
 	client *wrapper
 }
 
-func (s *BalanceService) Balance(ctx context.Context) (*payment.Balance, *payment.Response, error) {
+func (s *BalanceService) Balance(ctx context.Context) (*mtn.Balance, *mtn.Response, error) {
 	endpoint := "balance/now"
 	out := new(balanceResponse)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
@@ -30,15 +30,15 @@ type balanceResponse struct {
 	} `json:"data"`
 }
 
-func convertBalance(res *balanceResponse) *payment.Balance {
+func convertBalance(res *balanceResponse) *mtn.Balance {
 
-	data := &payment.Data{
+	data := &mtn.Data{
 		Date:     res.Data.Date,
-		Accounts: make([]payment.Account, 0),
+		Accounts: make([]mtn.Account, 0),
 	}
 
 	for _, item := range res.Data.Accounts {
-		account := &payment.Account{
+		account := &mtn.Account{
 			Currency:         item.Currency,
 			BalanceAvailable: item.BalanceAvailable,
 			BalanceActual:    item.BalanceActual,
@@ -46,7 +46,7 @@ func convertBalance(res *balanceResponse) *payment.Balance {
 		data.Accounts = append(data.Accounts, *account)
 	}
 
-	return &payment.Balance{
+	return &mtn.Balance{
 		Status: res.Status,
 		Data:   *data,
 	}

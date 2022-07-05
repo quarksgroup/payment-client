@@ -1,0 +1,13 @@
+{
+    "data": {
+        "balance": "0.00",
+        "currency": "RWF",
+        "account_status": "Active"
+    },
+    "status": {
+        "code": "200",
+        "success": true,
+        "result_code": "ESB000010",
+        "message": "SUCCESS"
+    }
+}

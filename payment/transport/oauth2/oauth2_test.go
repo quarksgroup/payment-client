@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/quarksgroup/payment-client/payment"
+	"github.com/quarksgroup/payment-client/payment/mtn"
 	"gopkg.in/h2non/gock.v1"
 )
 
@@ -21,7 +21,7 @@ func TestTransport(t *testing.T) {
 	client := &http.Client{
 		Transport: &Transport{
 			Source: StaticTokenSource(
-				&payment.Token{
+				&mtn.Token{
 					Token: "mF_9.B5f-4.1JqM",
 				},
 			),
@@ -54,6 +54,6 @@ type mockErrorSource struct {
 	err error
 }
 
-func (s mockErrorSource) Token(ctx context.Context) (*payment.Token, error) {
+func (s mockErrorSource) Token(ctx context.Context) (*mtn.Token, error) {
 	return nil, s.err
 }

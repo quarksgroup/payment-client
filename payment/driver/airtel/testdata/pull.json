@@ -1,0 +1,16 @@
+{
+  "data": {
+    "transaction": {
+      "reference_id": "CI220630.1512.B00012",
+      "airtel_money_id": "disbursement-FLFY2EQ9Q1-1234567890123",
+      "id": "1234567890123"
+    }
+  },
+  "status": {
+    "response_code": "DP00900001001",
+    "code": "200",
+    "success": true,
+    "result_code": "ESB000010",
+    "message": "*151*Txn ID CI220630.1512.B00012*S Ubu kuri konti yawe ufite RWF 6534.75. Ubikije neza RWF 100.00 kuri 722123205 Placide Ngarambe. Commission 0.00. KR#"
+  }
+}

@@ -1,4 +1,4 @@
-package payment
+package airtel
 
 import (
 	"context"
@@ -45,21 +45,32 @@ type Client struct {
 	// Base URL for API requests.
 	BaseURL *url.URL
 
-	// ReportURL is the url to callback for payment reports
-	ReportURL *url.URL
+	// EncryptedPin is the url to callback for payment reports
+	EncryptedPin string
+
+	//Country is the country name in abbreviation eg UG, KEN, RW etc.
+	Country string
+
+	//Currency is the currency eg RWF
+	Currency string
 
 	// Driver identifies the payment provider to use
 	Driver Driver
-	// Payments pulls and pushes funds from/to the underlying payment Provider/Driver
-	Payments PaymentsService
 
-	// Balances services returns information about account balance balance/now
-	Balances BalanceService
-
-	// Info services returns information about transactions/payments
-	Info InfoService
 	// Auth authenticates our http client against the payment provider.
 	Auth AuthService
+
+	//Account implements the account balance and status of the account
+	Account AccountService
+
+	//CheckNumber implements the check number details
+	CheckNumber CheckNumber
+
+	//Collections implements the collection service of push refund to agiven msisdn account
+	Collections CollectionsService
+
+	//Disbursemention implements the disbursement service of the pull
+	Disbursement DisbursementService
 
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.
