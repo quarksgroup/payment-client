@@ -3,7 +3,7 @@ package oauth2
 import (
 	"net/http"
 
-	"github.com/quarksgroup/payment-client/payment"
+	"github.com/quarksgroup/payment-client/payment/mtn"
 	"github.com/quarksgroup/payment-client/payment/transport/internal"
 )
 
@@ -18,7 +18,7 @@ const (
 // token if expired.
 type Transport struct {
 	Scheme string
-	Source payment.TokenSource
+	Source mtn.TokenSource
 	Base   http.RoundTripper
 }
 

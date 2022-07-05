@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/payment-client/payment"
+	"github.com/quarksgroup/payment-client/payment/mtn"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -29,7 +29,7 @@ func TestInfo(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(payment.Info)
+	want := new(mtn.Info)
 	raw, _ := ioutil.ReadFile("testdata/info.json.golden")
 	_ = json.Unmarshal(raw, want)
 

@@ -4,15 +4,15 @@ import (
 	"context"
 	"testing"
 
-	"github.com/quarksgroup/payment-client/payment"
+	"github.com/quarksgroup/payment-client/payment/mtn"
 )
 
 func TestContextTokenSource(t *testing.T) {
 	source := ContextTokenSource()
-	want := new(payment.Token)
+	want := new(mtn.Token)
 
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, payment.TokenKey{}, want)
+	ctx = context.WithValue(ctx, mtn.TokenKey{}, want)
 	got, err := source.Token(ctx)
 	if err != nil {
 		t.Error(err)

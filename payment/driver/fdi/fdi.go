@@ -1,4 +1,4 @@
-// Package fdi implements the payment.Client for the fdi(https://fdipaymentsapi.docs.apiary.io/)
+// Package fdi implements the mtn.Client for the fdi(https://fdipaymentsapi.docs.apiary.io/)
 package fdi
 
 import (
@@ -8,11 +8,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/quarksgroup/payment-client/payment"
+	"github.com/quarksgroup/payment-client/payment/mtn"
 )
 
-// New creates a new payment.Client instance backed by the payment.DriverFDI
-func New(uri, callback string) (*payment.Client, error) {
+// New creates a new mtn.Client instance backed by the mtn.DriverFDI
+func New(uri, callback string) (*mtn.Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -25,11 +25,11 @@ func New(uri, callback string) (*payment.Client, error) {
 		return nil, err
 	}
 
-	client := &wrapper{new(payment.Client)}
+	client := &wrapper{new(mtn.Client)}
 	client.BaseURL = base
 	client.ReportURL = report
 
-	client.Driver = payment.DriverFDI
+	client.Driver = mtn.DriverFDI
 
 	// initialize services
 	client.Payments = &paymentsService{client}
@@ -41,20 +41,20 @@ func New(uri, callback string) (*payment.Client, error) {
 }
 
 type wrapper struct {
-	*payment.Client
+	*mtn.Client
 }
 
 // NewDefault returns a new FDI API client using the`
 // default "https://payments-api.fdibiz.com/v2" address.
-func NewDefault(callback string) *payment.Client {
+func NewDefault(callback string) *mtn.Client {
 	client, _ := New("https://payments-api.fdibiz.com/v2", callback)
 	return client
 }
 
 // do wraps the Client.Do function by creating the Request and
 // unmarshalling the response.
-func (c *wrapper) do(ctx context.Context, method, path string, in, out interface{}) (*payment.Response, error) {
-	req := &payment.Request{
+func (c *wrapper) do(ctx context.Context, method, path string, in, out interface{}) (*mtn.Response, error) {
+	req := &mtn.Request{
 		Method: method,
 		Path:   path,
 	}
@@ -82,11 +82,11 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 	if res.Status > 299 && res.Status < 499 {
 		err := new(Err)
 		_ = json.NewDecoder(res.Body).Decode(err)
-		return res, &payment.Error{Code: res.Status, Message: err.Data.Message}
+		return res, &mtn.Error{Code: res.Status, Message: err.Data.Message}
 	}
 
 	if res.Status > 499 {
-		return res, &payment.Error{Code: res.Status, Message: "Something went wrong"}
+		return res, &mtn.Error{Code: res.Status, Message: "Something went wrong"}
 	}
 
 	if out == nil {

@@ -1,4 +1,4 @@
-package payment
+package mtn
 
 type Error struct {
 	Code    int    `json:"code"`

@@ -1,4 +1,4 @@
-package fdi
+package airtel
 
 import (
 	"context"
@@ -8,27 +8,27 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/airtel"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestLogin(t *testing.T) {
+func TestBalance(t *testing.T) {
 	defer gock.Off()
 
-	gock.New("https://payments-api.fdibiz.com/v2").
-		Post("/auth").
+	gock.New(baseUrl).
+		Get("/standard/v1/users/balance").
 		Reply(200).
 		Type("application/json").
-		File("testdata/token.json")
-	client := NewDefault("https://test-callback.io")
+		File("testdata/account.json")
+	client := NewDefault("encrypted-pin")
 
-	got, _, err := client.Auth.Login(context.Background(), "id", "secret")
+	got, _, err := client.Account.Balance(context.Background())
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(mtn.Token)
-	raw, _ := ioutil.ReadFile("testdata/token.json.golden")
+	want := new(airtel.Balance)
+	raw, _ := ioutil.ReadFile("testdata/account.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

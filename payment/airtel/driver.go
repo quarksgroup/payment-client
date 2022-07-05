@@ -1,4 +1,4 @@
-package payment
+package airtel
 
 // Driver identifies the payment platform driver
 type Driver uint
@@ -6,14 +6,13 @@ type Driver uint
 // Supported drivers
 const (
 	DriverUnknown Driver = iota
-	DriverFDI
-	//DriverMTN
+	DriverAirtel
 )
 
 func (d Driver) String() string {
 	switch d {
-	case DriverFDI:
-		return "fdi"
+	case DriverAirtel:
+		return "airtel"
 	default:
 		return "unknown"
 	}
