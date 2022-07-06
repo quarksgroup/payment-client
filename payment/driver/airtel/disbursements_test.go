@@ -27,7 +27,7 @@ func TestPull(t *testing.T) {
 		Post("/standard/v1/disbursements/").
 		Reply(200).
 		Type("application/json").
-		File("testdata/status.json")
+		File("testdata/pull.json")
 	client := NewDefault("encrypted-pin")
 
 	got, _, err := client.Disbursement.Pull(context.Background(), in)
@@ -35,7 +35,7 @@ func TestPull(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
 	want := new(airtel.PaymentResp)
-	raw, _ := ioutil.ReadFile("testdata/status.json.golden")
+	raw, _ := ioutil.ReadFile("testdata/pull.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

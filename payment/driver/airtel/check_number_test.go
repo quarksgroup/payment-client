@@ -19,7 +19,7 @@ func TestCheck(t *testing.T) {
 	defer gock.Off()
 
 	gock.New(baseUrl).
-		Get(fmt.Sprintf("/standard/v1/users/%s", num)).
+		Get("/standard/v1/users/").
 		Reply(200).
 		Type("application/json").
 		File("testdata/check_number.json")

@@ -17,8 +17,8 @@ func (s *checkNumberService) Check(ctx context.Context, phone string) (*airtel.N
 	endpoint := fmt.Sprintf("standard/v1/users/%s", phone)
 
 	header := http.Header{
-		"X-country":  {s.client.Country},
-		"X-Currency": {s.client.Currency},
+		"X-country":  []string{s.client.Country},
+		"X-Currency": []string{s.client.Currency},
 	}
 
 	out := new(checkResponse)

@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -78,7 +77,6 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 
 	for k, v := range headers {
 		req.Header[k] = v
-		fmt.Println(k, v)
 	}
 
 	// execute the http request

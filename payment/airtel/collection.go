@@ -12,10 +12,10 @@ type PaymentReq struct {
 
 // PaymentResp reports the status of a requested transaction
 type PaymentResp struct {
-	Ref          string
-	Status       bool
+	Ref          string `json:"ref"`
+	Status       bool   `json:"status"`
 	Message      string `json:"message"`
-	ResponseCode string
+	ResponseCode string `json:"response_code"`
 }
 
 // CollectionsService push funds to airtel payment API provider
