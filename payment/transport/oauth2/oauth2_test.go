@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
 	"gopkg.in/h2non/gock.v1"
 )
 

@@ -3,8 +3,8 @@ package oauth2
 import (
 	"net/http"
 
-	"github.com/quarksgroup/payment-client/payment/mtn"
-	"github.com/quarksgroup/payment-client/payment/transport/internal"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/transport/internal"
 )
 
 // Supported authentication schemes.

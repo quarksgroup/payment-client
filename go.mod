@@ -1,4 +1,4 @@
-module github.com/quarksgroup/payment-client
+module github.com/iradukunda1/payment-staging
 
 go 1.14
 

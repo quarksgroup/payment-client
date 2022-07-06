@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )

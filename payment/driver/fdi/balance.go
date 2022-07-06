@@ -3,7 +3,7 @@ package fdi
 import (
 	"context"
 
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
 )
 
 type BalanceService struct {

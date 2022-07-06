@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
 )
 
 // New creates a new mtn.Client instance backed by the mtn.DriverFDI

@@ -3,7 +3,7 @@ package oauth2
 import (
 	"context"
 
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
 )
 
 // StaticTokenSource returns a TokenSource that always
