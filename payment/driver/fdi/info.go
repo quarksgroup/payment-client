@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
 )
 
 type infoService struct {

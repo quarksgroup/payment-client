@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/quarksgroup/payment-client/payment/mtn"
+	"github.com/iradukunda1/payment-staging/payment/mtn"
 )
 
 func TestContextTokenSource(t *testing.T) {
