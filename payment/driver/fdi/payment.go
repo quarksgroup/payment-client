@@ -3,20 +3,20 @@ package fdi
 import (
 	"context"
 
-	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/fdi"
 )
 
 // FDI Supported providers
 const (
-	MTN    mtn.Provider = "momo-mtn-rw"
-	Airtel mtn.Provider = "momo-airtel-rw"
+	MTN    fdi.Provider = "momo-mtn-rw"
+	Airtel fdi.Provider = "momo-airtel-rw"
 )
 
 type paymentsService struct {
 	client *wrapper
 }
 
-func (s *paymentsService) Pull(ctx context.Context, py *mtn.Payment) (*mtn.Status, *mtn.Response, error) {
+func (s *paymentsService) Pull(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
 	endpoint := "momo/pull"
 	in := &paymentRequest{
 		Ref:      py.ID,
@@ -30,7 +30,7 @@ func (s *paymentsService) Pull(ctx context.Context, py *mtn.Payment) (*mtn.Statu
 	return convertResponse(out), res, err
 }
 
-func (s *paymentsService) Push(ctx context.Context, py *mtn.Payment) (*mtn.Status, *mtn.Response, error) {
+func (s *paymentsService) Push(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
 	endpoint := "momo/push"
 	in := &paymentRequest{
 		Ref:      py.ID,
@@ -66,12 +66,12 @@ type data struct {
 	State   string `json:"state,omitempty"`
 }
 
-func convertResponse(res *paymentResponse) *mtn.Status {
-	return &mtn.Status{
+func convertResponse(res *paymentResponse) *fdi.Status {
+	return &fdi.Status{
 		Ref:   res.Data.Ref,
 		GRef:  res.Data.Gateway,
 		State: res.Data.State,
 	}
 }
 
-var _ (mtn.PaymentsService) = (*paymentsService)(nil)
+var _ (fdi.PaymentsService) = (*paymentsService)(nil)

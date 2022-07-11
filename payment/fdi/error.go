@@ -1,4 +1,4 @@
-package mtn
+package fdi
 
 type Error struct {
 	Code    int    `json:"code"`

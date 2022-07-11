@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/iradukunda1/payment-staging/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/airtel"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -16,9 +16,9 @@ import (
 func TestPull(t *testing.T) {
 	defer gock.Off()
 
-	in := &airtel.PaymentReq{
+	in := &airtel.Payment{
 		ID:     "xxxx",
-		Amount: 1000,
+		Amount: 100,
 		Ref:    "xxxx",
 		Phone:  num,
 	}
@@ -30,11 +30,11 @@ func TestPull(t *testing.T) {
 		File("testdata/pull.json")
 	client := NewDefault("encrypted-pin")
 
-	got, _, err := client.Disbursement.Pull(context.Background(), in)
+	got, _, err := client.Payments.Pull(context.Background(), in)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(airtel.PaymentResp)
+	want := new(airtel.Status)
 	raw, _ := ioutil.ReadFile("testdata/pull.json.golden")
 	_ = json.Unmarshal(raw, want)
 

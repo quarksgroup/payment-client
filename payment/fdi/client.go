@@ -1,25 +1,12 @@
-package mtn
+package fdi
 
 import (
 	"context"
-	"errors"
 	"io"
 	"net/http"
 	"net/url"
-)
 
-var (
-	// ErrNotFound indicates a resource is not found.
-	ErrNotFound = errors.New("Not Found")
-
-	// ErrNotSupported indicates a resource endpoint is not
-	// supported or implemented.
-	ErrNotSupported = errors.New("Not Supported")
-
-	// ErrNotAuthorized indicates the request is not
-	// authorized or the user does not have access to the
-	// resource.
-	ErrNotAuthorized = errors.New("Not Authorized")
+	"github.com/quarksgroup/payment-client/payment/driver"
 )
 
 // Request represents an HTTP request.
@@ -49,7 +36,7 @@ type Client struct {
 	ReportURL *url.URL
 
 	// Driver identifies the payment provider to use
-	Driver Driver
+	Driver driver.Driver
 	// Payments pulls and pushes funds from/to the underlying payment Provider/Driver
 	Payments PaymentsService
 

@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/fdi"
 )
 
 type infoService struct {
 	client *wrapper
 }
 
-func (s *infoService) Info(ctx context.Context, ref string) (*mtn.Info, *mtn.Response, error) {
+func (s *infoService) TransactionInfo(ctx context.Context, ref string) (*fdi.Info, *fdi.Response, error) {
 	endpoint := fmt.Sprintf("momo/trx/%s/info", ref)
 	out := new(infoResponse)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
@@ -37,8 +37,8 @@ type infoResponse struct {
 	} `json:"data"`
 }
 
-func convertInfo(info *infoResponse) *mtn.Info {
-	return &mtn.Info{
+func convertInfo(info *infoResponse) *fdi.Info {
+	return &fdi.Info{
 		ID:        info.Data.Ref,
 		Amount:    info.Data.Amount,
 		Cost:      info.Data.Fees,

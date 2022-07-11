@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/fdi"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -16,7 +16,7 @@ import (
 func TestPull(t *testing.T) {
 	defer gock.Off()
 
-	py := &mtn.Payment{
+	py := &fdi.Payment{
 		ID:       "xxxx",
 		Amount:   1000,
 		Wallet:   "xxxx",
@@ -34,7 +34,7 @@ func TestPull(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(mtn.Status)
+	want := new(fdi.Status)
 	raw, _ := ioutil.ReadFile("testdata/status.json.golden")
 	_ = json.Unmarshal(raw, want)
 
@@ -47,7 +47,7 @@ func TestPull(t *testing.T) {
 func TestPush(t *testing.T) {
 	defer gock.Off()
 
-	py := &mtn.Payment{
+	py := &fdi.Payment{
 		ID:       "xxxx",
 		Amount:   1000,
 		Wallet:   "xxxx",
@@ -65,7 +65,7 @@ func TestPush(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(mtn.Status)
+	want := new(fdi.Status)
 	raw, _ := ioutil.ReadFile("testdata/status.json.golden")
 	_ = json.Unmarshal(raw, want)
 

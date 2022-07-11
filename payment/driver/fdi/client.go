@@ -1,4 +1,4 @@
-// Package fdi implements the mtn.Client for the fdi(https://fdipaymentsapi.docs.apiary.io/)
+// Package fdi implements the fdi.Client for the fdi(https://fdipaymentsapi.docs.apiary.io/)
 package fdi
 
 import (
@@ -8,11 +8,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/driver"
+	"github.com/quarksgroup/payment-client/payment/fdi"
 )
 
-// New creates a new mtn.Client instance backed by the mtn.DriverFDI
-func New(uri, callback string) (*mtn.Client, error) {
+// New creates a new fdi.Client instance backed by the fdi.DriverFDI
+func New(uri, callback string) (*fdi.Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -25,11 +26,11 @@ func New(uri, callback string) (*mtn.Client, error) {
 		return nil, err
 	}
 
-	client := &wrapper{new(mtn.Client)}
+	client := &wrapper{new(fdi.Client)}
 	client.BaseURL = base
 	client.ReportURL = report
 
-	client.Driver = mtn.DriverFDI
+	client.Driver = driver.DriverFDI
 
 	// initialize services
 	client.Payments = &paymentsService{client}
@@ -41,20 +42,20 @@ func New(uri, callback string) (*mtn.Client, error) {
 }
 
 type wrapper struct {
-	*mtn.Client
+	*fdi.Client
 }
 
 // NewDefault returns a new FDI API client using the`
 // default "https://payments-api.fdibiz.com/v2" address.
-func NewDefault(callback string) *mtn.Client {
+func NewDefault(callback string) *fdi.Client {
 	client, _ := New("https://payments-api.fdibiz.com/v2", callback)
 	return client
 }
 
 // do wraps the Client.Do function by creating the Request and
 // unmarshalling the response.
-func (c *wrapper) do(ctx context.Context, method, path string, in, out interface{}) (*mtn.Response, error) {
-	req := &mtn.Request{
+func (c *wrapper) do(ctx context.Context, method, path string, in, out interface{}) (*fdi.Response, error) {
+	req := &fdi.Request{
 		Method: method,
 		Path:   path,
 	}
@@ -82,11 +83,11 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 	if res.Status > 299 && res.Status < 499 {
 		err := new(Err)
 		_ = json.NewDecoder(res.Body).Decode(err)
-		return res, &mtn.Error{Code: res.Status, Message: err.Data.Message}
+		return res, &fdi.Error{Code: res.Status, Message: err.Data.Message}
 	}
 
 	if res.Status > 499 {
-		return res, &mtn.Error{Code: res.Status, Message: "Something went wrong"}
+		return res, &fdi.Error{Code: res.Status, Message: "Something went wrong"}
 	}
 
 	if out == nil {

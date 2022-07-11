@@ -3,7 +3,7 @@ package airtel
 import (
 	"context"
 
-	"github.com/iradukunda1/payment-staging/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/airtel"
 )
 
 type accountService struct {

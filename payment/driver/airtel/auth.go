@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/iradukunda1/payment-staging/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/airtel"
 )
 
 type authService struct {

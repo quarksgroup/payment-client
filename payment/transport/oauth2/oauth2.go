@@ -3,8 +3,9 @@ package oauth2
 import (
 	"net/http"
 
-	"github.com/iradukunda1/payment-staging/payment/mtn"
-	"github.com/iradukunda1/payment-staging/payment/transport/internal"
+	"github.com/quarksgroup/payment-client/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/fdi"
+	"github.com/quarksgroup/payment-client/payment/transport/internal"
 )
 
 // Supported authentication schemes.
@@ -18,7 +19,7 @@ const (
 // token if expired.
 type Transport struct {
 	Scheme string
-	Source mtn.TokenSource
+	Source fdi.TokenSource
 	Base   http.RoundTripper
 }
 
@@ -50,6 +51,44 @@ func (t *Transport) base() http.RoundTripper {
 // scheme returns the token scheme. If no scheme is
 // configured, the bearer scheme is used.
 func (t *Transport) scheme() string {
+	if t.Scheme == "" {
+		return SchemeBearer
+	}
+	return t.Scheme
+}
+
+//AirtelTransport...
+type AirtelTransport struct {
+	Scheme string
+	Source airtel.TokenSource
+	Base   http.RoundTripper
+}
+
+//RoundTrip...
+func (t *AirtelTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	ctx := r.Context()
+	token, err := t.Source.Token(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if token == nil {
+		return t.base().RoundTrip(r)
+	}
+	r2 := internal.CloneRequest(r)
+	r2.Header.Set("Authorization", t.scheme()+" "+token.Token)
+	return t.base().RoundTrip(r2)
+}
+
+//base...
+func (t *AirtelTransport) base() http.RoundTripper {
+	if t.Base != nil {
+		return t.Base
+	}
+	return http.DefaultTransport
+}
+
+//Scheme...
+func (t *AirtelTransport) scheme() string {
 	if t.Scheme == "" {
 		return SchemeBearer
 	}

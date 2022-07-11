@@ -5,14 +5,14 @@ import (
 	"errors"
 	"time"
 
-	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/fdi"
 )
 
 type authService struct {
 	client *wrapper
 }
 
-func (s *authService) Login(ctx context.Context, id, secret string) (*mtn.Token, *mtn.Response, error) {
+func (s *authService) Login(ctx context.Context, id, secret string) (*fdi.Token, *fdi.Response, error) {
 	endpoint := "auth"
 	in := tokenRequest{
 		App:    id,
@@ -23,7 +23,7 @@ func (s *authService) Login(ctx context.Context, id, secret string) (*mtn.Token,
 	return convertToken(out), res, err
 }
 
-func (s *authService) Refresh(ctx context.Context, token *mtn.Token, force bool) (*mtn.Token, *mtn.Response, error) {
+func (s *authService) Refresh(ctx context.Context, token *fdi.Token, force bool) (*fdi.Token, *fdi.Response, error) {
 	return nil, nil, errors.New("refresh not implemented")
 }
 
@@ -40,11 +40,11 @@ type tokenResponse struct {
 	}
 }
 
-func convertToken(tk *tokenResponse) *mtn.Token {
+func convertToken(tk *tokenResponse) *fdi.Token {
 
 	expires, _ := time.Parse("2006-01-02T15:04:05.99999", tk.Data.ExpiresAt)
 
-	return &mtn.Token{
+	return &fdi.Token{
 		Token:   tk.Data.Token,
 		Expires: expires,
 	}
