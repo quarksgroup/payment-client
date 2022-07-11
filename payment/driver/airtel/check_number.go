@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/iradukunda1/payment-staging/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/airtel"
 )
 
 type checkNumberService struct {
@@ -20,6 +20,7 @@ func (s *checkNumberService) Check(ctx context.Context, phone string) (*airtel.N
 		"X-country":  []string{s.client.Country},
 		"X-Currency": []string{s.client.Currency},
 	}
+	fmt.Println(header)
 
 	out := new(checkResponse)
 

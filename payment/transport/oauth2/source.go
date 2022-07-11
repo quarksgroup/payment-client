@@ -3,35 +3,63 @@ package oauth2
 import (
 	"context"
 
-	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/fdi"
 )
 
 // StaticTokenSource returns a TokenSource that always
 // returns the same token. Because the provided token t
 // is never refreshed, StaticTokenSource is only useful
 // for tokens that never expire.
-func StaticTokenSource(t *mtn.Token) mtn.TokenSource {
+func StaticTokenSource(t *fdi.Token) fdi.TokenSource {
 	return staticTokenSource{t}
 }
 
 type staticTokenSource struct {
-	token *mtn.Token
+	token *fdi.Token
 }
 
-func (s staticTokenSource) Token(context.Context) (*mtn.Token, error) {
+func (s staticTokenSource) Token(context.Context) (*fdi.Token, error) {
 	return s.token, nil
 }
 
 // ContextTokenSource returns a TokenSource that returns
 // a token from the http.Request context.
-func ContextTokenSource() mtn.TokenSource {
+func ContextTokenSource() fdi.TokenSource {
 	return contextTokenSource{}
 }
 
 type contextTokenSource struct {
 }
 
-func (s contextTokenSource) Token(ctx context.Context) (*mtn.Token, error) {
-	token, _ := ctx.Value(mtn.TokenKey{}).(*mtn.Token)
+func (s contextTokenSource) Token(ctx context.Context) (*fdi.Token, error) {
+	token, _ := ctx.Value(fdi.TokenKey{}).(*fdi.Token)
+	return token, nil
+}
+
+// StaticTokenSource...
+func AirtelStaticTokenSource(t *airtel.Token) airtel.TokenSource {
+	return airtelStaticTokenSource{t}
+}
+
+// airtelStaticTokenSource...
+type airtelStaticTokenSource struct {
+	token *airtel.Token
+}
+
+func (s airtelStaticTokenSource) Token(context.Context) (*airtel.Token, error) {
+	return s.token, nil
+}
+
+func AirtelContextTokenSource() airtel.TokenSource {
+	return airtelContextTokenSource{}
+}
+
+// airtelContextTokenSource...
+type airtelContextTokenSource struct {
+}
+
+func (s airtelContextTokenSource) Token(ctx context.Context) (*airtel.Token, error) {
+	token, _ := ctx.Value(fdi.TokenKey{}).(*airtel.Token)
 	return token, nil
 }

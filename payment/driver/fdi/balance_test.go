@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/iradukunda1/payment-staging/payment/mtn"
+	"github.com/quarksgroup/payment-client/payment/fdi"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -27,7 +27,7 @@ func TestBalance(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(mtn.Balance)
+	want := new(fdi.Balance)
 	raw, _ := ioutil.ReadFile("testdata/balance.json.golden")
 	_ = json.Unmarshal(raw, want)
 

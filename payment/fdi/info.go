@@ -1,4 +1,4 @@
-package mtn
+package fdi
 
 import (
 	"context"
@@ -15,8 +15,8 @@ type Info struct {
 	CreatedAt time.Time
 }
 
-// InfoService returns information about a transaction
+// InfoService returns information about a passed in item
 type InfoService interface {
-	// Info takes a transaction's id and returns info about it.
-	Info(context.Context, string) (*Info, *Response, error)
+	// TransactionInfo takes a transaction's id and returns info about it.
+	TransactionInfo(context.Context, string) (*Info, *Response, error)
 }

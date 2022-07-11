@@ -9,13 +9,15 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/iradukunda1/payment-staging/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/airtel"
+	"github.com/quarksgroup/payment-client/payment/driver"
 )
 
 const (
-	baseUrl  = "https://openapi.airtel.africa"
-	currency = "RWF"
-	country  = "RW"
+	baseUrl   = "https://openapi.airtel.africa"
+	currency  = "RWF"
+	country   = "RW"
+	userAgent = "paypack"
 )
 
 // New creates a new payment.Client instance backed by the payment.DriverAirtel
@@ -31,14 +33,14 @@ func New(uri, pin, currency, country string) (*airtel.Client, error) {
 	client := &wrapper{new(airtel.Client)}
 	client.BaseURL = base
 	client.Country = country
+	client.UserAgent = userAgent
 	client.Currency = currency
 	client.EncryptedPin = pin
 	client.Auth = &authService{client}
-	client.Driver = airtel.DriverAirtel
+	client.Driver = driver.DriverAirtel
 	client.Account = &accountService{client}
 	client.CheckNumber = &checkNumberService{client}
-	client.Collections = &collectionService{client}
-	client.Disbursement = &disbursementService{client}
+	client.Payments = &paymentsService{client}
 
 	// initialize services
 
@@ -79,11 +81,17 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 		req.Header[k] = v
 	}
 
+	if c.UserAgent != "" {
+		req.Header.Set("User-Agent", c.UserAgent)
+	}
+
 	// execute the http request
 	res, err := c.Client.Do(ctx, req)
+
 	if err != nil {
 		return nil, err
 	}
+
 	defer res.Body.Close()
 
 	// if an error is encountered, unmarshal and return the
