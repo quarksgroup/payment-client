@@ -1,0 +1,15 @@
+{
+  "data": {
+    "transaction": {
+      "id": "QUARKS350273CSD55X",
+      "status": "Success."
+    }
+  },
+  "status": {
+    "response_code": "DP00800001006",
+    "code": "200",
+    "success": true,
+    "result_code": "ESB000010",
+    "message": "Success."
+  }
+}
