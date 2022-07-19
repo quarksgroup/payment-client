@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/quarksgroup/payment-client/airtel"
 	"github.com/quarksgroup/payment-client/airtel/driver"
@@ -18,10 +20,16 @@ const (
 	currency  = "RWF"
 	country   = "RW"
 	userAgent = "paypack"
+	retry     = 3
 )
 
+//This wrapper all client implentation of airtel
+type wrapper struct {
+	*airtel.Client
+}
+
 // New creates a new payment.Client instance backed by the payment.DriverAirtel
-func New(uri, pin, currency, country string) (*airtel.Client, error) {
+func New(uri, pin, currency, country string, retry int) (*airtel.Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -30,7 +38,20 @@ func New(uri, pin, currency, country string) (*airtel.Client, error) {
 		base.Path = base.Path + "/"
 	}
 
+	transport := &airtel.Transport{
+		Next:       http.DefaultTransport,
+		MaxRetries: retry,
+		Logger:     os.Stdout,
+		Delay:      time.Duration(1 * time.Second),
+		Source:     ContextTokenSource(),
+	}
+
+	httpClient := &http.Client{
+		Transport: transport,
+	}
+
 	client := &wrapper{new(airtel.Client)}
+	client.Client.Client = httpClient
 	client.BaseURL = base
 	client.Country = country
 	client.UserAgent = userAgent
@@ -42,19 +63,13 @@ func New(uri, pin, currency, country string) (*airtel.Client, error) {
 	client.CheckNumber = &checkNumberService{client}
 	client.Payments = &paymentsService{client}
 
-	// initialize services
-
 	return client.Client, nil
-}
-
-type wrapper struct {
-	*airtel.Client
 }
 
 // NewDefault returns a new AIRTEL API client using the`
 // default "https://openapi.airtel.africa" address, country RW(Rwanda) and RWF(Rwandan franc).
 func NewDefault(pin string) *airtel.Client {
-	client, _ := New(baseUrl, pin, currency, country)
+	client, _ := New(baseUrl, pin, currency, country, retry)
 	return client
 }
 
@@ -77,8 +92,11 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 		req.Body = buf
 	}
 
-	for k, v := range headers {
-		req.Header[k] = v
+	// set the request headers
+	if headers != nil {
+		for k, v := range headers {
+			req.Header[k] = v
+		}
 	}
 
 	if c.UserAgent != "" {

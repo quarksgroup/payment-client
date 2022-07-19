@@ -5,15 +5,23 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"net/http"
 	"net/url"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/quarksgroup/payment-client/fdi"
 	"github.com/quarksgroup/payment-client/fdi/driver"
 )
 
+const (
+	baseUrl = "https://payments-api.fdibiz.com/v2"
+	retry   = 3 // this is the defualt retry for fdi.Transport MaxRetries of RoundTripp
+)
+
 // New creates a new fdi.Client instance backed by the fdi.DriverFDI
-func New(uri, callback string) (*fdi.Client, error) {
+func New(uri, callback string, retry int) (*fdi.Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -26,7 +34,20 @@ func New(uri, callback string) (*fdi.Client, error) {
 		return nil, err
 	}
 
+	transport := &fdi.Transport{
+		Next:       http.DefaultTransport,
+		MaxRetries: retry,
+		Logger:     os.Stdout,
+		Delay:      time.Duration(1 * time.Second),
+		Source:     ContextTokenSource(),
+	}
+
+	httpClient := &http.Client{
+		Transport: transport,
+	}
+
 	client := &wrapper{new(fdi.Client)}
+	client.Client.Client = httpClient
 	client.BaseURL = base
 	client.ReportURL = report
 
@@ -48,7 +69,7 @@ type wrapper struct {
 // NewDefault returns a new FDI API client using the`
 // default "https://payments-api.fdibiz.com/v2" address.
 func NewDefault(callback string) *fdi.Client {
-	client, _ := New("https://payments-api.fdibiz.com/v2", callback)
+	client, _ := New(baseUrl, callback, retry)
 	return client
 }
 
