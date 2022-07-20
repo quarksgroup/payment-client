@@ -5,8 +5,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-
-	"github.com/quarksgroup/payment-client/airtel/driver"
 )
 
 // Request represents an HTTP request.
@@ -45,9 +43,6 @@ type Client struct {
 
 	//Currency is the currency eg RWF
 	Currency string
-
-	// Driver identifies the payment provider to use
-	Driver driver.Driver
 
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.

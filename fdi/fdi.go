@@ -5,8 +5,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-
-	"github.com/quarksgroup/payment-client/fdi/driver"
 )
 
 // Request represents an HTTP request.
@@ -34,9 +32,6 @@ type Client struct {
 
 	// ReportURL is the url to callback for payment reports
 	ReportURL *url.URL
-
-	// Driver identifies the payment provider to use
-	Driver driver.Driver
 
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.

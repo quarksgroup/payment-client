@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/quarksgroup/payment-client/airtel"
-	"github.com/quarksgroup/payment-client/airtel/driver"
 )
 
 const (
@@ -60,9 +59,6 @@ func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*Cli
 	client.UserAgent = userAgent
 	client.Currency = currency
 	client.EncryptedPin = pin
-	// client.Auth = &authService{client}
-	// transport.Auth = &authService{client}
-	client.Driver = driver.DriverAirtel
 
 	return client, nil
 }
