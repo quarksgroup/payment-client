@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/quarksgroup/payment-client/fdi"
-	"github.com/quarksgroup/payment-client/fdi/driver"
 )
 
 const (
@@ -56,7 +55,6 @@ func New(uri, client_id, sceret, callback string, retry int) (*Client, error) {
 	client.Client.Client = httpClient
 	client.Client.BaseURL = base
 	client.Client.ReportURL = report
-	client.Client.Driver = driver.DriverFDI
 	return client, nil
 }
 
