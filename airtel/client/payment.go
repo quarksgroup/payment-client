@@ -1,4 +1,4 @@
-package airtel
+package client
 
 import (
 	"context"
@@ -7,18 +7,14 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
-type paymentsService struct {
-	client *wrapper
-}
-
 //Push...
-func (s *paymentsService) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
+func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
 
 	endpoint := "merchant/v1/payments/"
 
 	sub := &subscriber{
-		Country:  s.client.Country,
-		Currency: s.client.Currency,
+		Country:  c.Client.Country,
+		Currency: c.Client.Currency,
 		Msisdn:   req.Phone,
 	}
 
@@ -34,13 +30,13 @@ func (s *paymentsService) Push(ctx context.Context, req *airtel.Payment) (*airte
 	}
 
 	header := http.Header{
-		"X-country":  []string{s.client.Country},
-		"X-Currency": []string{s.client.Currency},
+		"X-country":  []string{c.Client.Country},
+		"X-Currency": []string{c.Client.Currency},
 	}
 
 	out := new(pushResponse)
 
-	res, err := s.client.do(ctx, "POST", endpoint, in, out, header)
+	res, err := c.do(ctx, "POST", endpoint, in, out, header)
 
 	if err != nil {
 		return nil, nil, err
@@ -53,7 +49,7 @@ func (s *paymentsService) Push(ctx context.Context, req *airtel.Payment) (*airte
 }
 
 //Pull...
-func (s *paymentsService) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
+func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
 
 	endpoint := "standard/v1/disbursements/"
 
@@ -63,19 +59,19 @@ func (s *paymentsService) Pull(ctx context.Context, req *airtel.Payment) (*airte
 	}
 	in := &pullRequest{
 		Reference:   req.Ref,
-		Pin:         s.client.EncryptedPin,
+		Pin:         c.Client.EncryptedPin,
 		Transaction: tx,
 	}
 	in.Payee.Msisdn = req.Phone
 
 	header := http.Header{
-		"X-country":  []string{s.client.Country},
-		"X-Currency": []string{s.client.Currency},
+		"X-country":  []string{c.Client.Country},
+		"X-Currency": []string{c.Client.Currency},
 	}
 
 	out := new(pullResponse)
 
-	res, err := s.client.do(ctx, "POST", endpoint, in, out, header)
+	res, err := c.do(ctx, "POST", endpoint, in, out, header)
 
 	if err != nil {
 		return nil, nil, err
@@ -162,5 +158,3 @@ func convertPull(res *pullResponse) *airtel.Status {
 		Message:      res.Status.Message,
 	}
 }
-
-var _ (airtel.PaymentService) = (*paymentsService)(nil)

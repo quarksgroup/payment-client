@@ -1,4 +1,4 @@
-package airtel
+package client
 
 import (
 	"context"
@@ -8,23 +8,19 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
-type checkNumberService struct {
-	client *wrapper
-}
-
-func (s *checkNumberService) Check(ctx context.Context, phone string) (*airtel.Number, *airtel.Response, error) {
+func (c *Client) Check(ctx context.Context, phone string) (*airtel.Number, *airtel.Response, error) {
 
 	endpoint := fmt.Sprintf("standard/v1/users/%s", phone)
 
 	header := http.Header{
-		"X-country":  []string{s.client.Country},
-		"X-Currency": []string{s.client.Currency},
+		"X-country":  []string{c.Client.Country},
+		"X-Currency": []string{c.Client.Currency},
 	}
 	fmt.Println(header)
 
 	out := new(checkResponse)
 
-	res, err := s.client.do(ctx, "GET", endpoint, nil, out, header)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, header)
 
 	if !out.Status.Success {
 		return nil, nil, &airtel.Error{Code: http.StatusBadRequest, Message: out.Status.Message}

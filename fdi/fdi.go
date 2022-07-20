@@ -1,4 +1,4 @@
-package airtel
+package fdi
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/quarksgroup/payment-client/airtel/driver"
+	"github.com/quarksgroup/payment-client/fdi/driver"
 )
 
 // Request represents an HTTP request.
@@ -27,39 +27,16 @@ type Response struct {
 
 // Client manages communication with a payment gateways API.
 type Client struct {
-	// HTTP client used to communicate with the API.
 	Client *http.Client
 
-	// Base URL for API requests. Defaults to the public Airtel API, but can be
-	// BaseURL should always be specified with a trailing slash.
+	// Base URL for API requests.
 	BaseURL *url.URL
 
-	// EncryptedPin is the url to callback for payment reports
-	EncryptedPin string
-
-	//Country is the country name in abbreviation eg UG, KEN, RW etc.
-	Country string
-
-	// User agent used when communicating with the airtel API.
-	UserAgent string
-
-	//Currency is the currency eg RWF
-	Currency string
+	// ReportURL is the url to callback for payment reports
+	ReportURL *url.URL
 
 	// Driver identifies the payment provider to use
 	Driver driver.Driver
-
-	// Auth authenticates our http client against the payment provider.
-	Auth AuthService
-
-	//Account implements the account balance and status of the account
-	Account AccountService
-
-	//CheckNumber implements the check number details
-	CheckNumber CheckNumber
-
-	//Payments implements the airtel.PaymentService of pull and push refund to agiven msisdn account
-	Payments PaymentService
 
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.

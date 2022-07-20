@@ -1,5 +1,5 @@
-// Package airtel implements the payment.Client for the airtel(https://developers.airtel.africa/documentation)
-package airtel
+// package client implements the payment.Client for the airtel(https://developers.airtel.africa/documentation)
+package client
 
 import (
 	"bytes"
@@ -23,13 +23,13 @@ const (
 	retry     = 3
 )
 
-//This wrapper all client implentation of airtel
-type wrapper struct {
+//This Client all client implentation of airtel
+type Client struct {
 	*airtel.Client
 }
 
 // New creates a new payment.Client instance backed by the payment.DriverAirtel
-func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*airtel.Client, error) {
+func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -53,34 +53,31 @@ func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*air
 		Transport: transport,
 	}
 
-	client := &wrapper{new(airtel.Client)}
+	client := &Client{new(airtel.Client)}
 	client.Client.Client = httpClient
 	client.BaseURL = base
 	client.Country = country
 	client.UserAgent = userAgent
 	client.Currency = currency
 	client.EncryptedPin = pin
-	client.Auth = &authService{client}
-	transport.Auth = &authService{client}
+	// client.Auth = &authService{client}
+	// transport.Auth = &authService{client}
 	client.Driver = driver.DriverAirtel
-	client.Account = &accountService{client}
-	client.CheckNumber = &checkNumberService{client}
-	client.Payments = &paymentsService{client}
 
-	return client.Client, nil
+	return client, nil
 }
 
 // NewDefault returns a new AIRTEL API client using the
 //But it take payment credential parameter
 // default "https://openapi.airtel.africa" address, country RW(Rwanda) and RWF(Rwandan franc).
-func NewDefault(pin, clientId, secret, grant string) *airtel.Client {
+func NewDefault(pin, clientId, secret, grant string) *Client {
 	client, _ := New(baseUrl, pin, clientId, secret, grant, currency, country, retry)
 	return client
 }
 
 // do wraps the Client.Do function by creating the Request and
 // unmarshalling the response.
-func (c *wrapper) do(ctx context.Context, method, path string, in, out interface{}, headers http.Header) (*airtel.Response, error) {
+func (c *Client) do(ctx context.Context, method, path string, in, out interface{}, headers http.Header) (*airtel.Response, error) {
 	req := &airtel.Request{
 		Method: method,
 		Path:   path,

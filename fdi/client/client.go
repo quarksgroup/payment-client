@@ -1,5 +1,5 @@
-// Package fdi implements the fdi.Client for the fdi(https://fdipaymentsapi.docs.apiary.io/)
-package fdi
+// package client implements the fdi.Client for the fdi(https://fdipaymentsapi.docs.apiary.io/)
+package client
 
 import (
 	"bytes"
@@ -20,8 +20,12 @@ const (
 	retry   = 3 // this is the defualt retry for fdi.Transport MaxRetries of RoundTripp
 )
 
+type Client struct {
+	*fdi.Client
+}
+
 // New creates a new fdi.Client instance backed by the fdi.DriverFDI
-func New(uri, callback string, retry int) (*fdi.Client, error) {
+func New(uri, client_id, sceret, callback string, retry int) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -34,48 +38,38 @@ func New(uri, callback string, retry int) (*fdi.Client, error) {
 		return nil, err
 	}
 
-	transport := &fdi.ReteryTransport{
+	transport := &fdi.RetryTransport{
 		Next:       http.DefaultTransport,
 		MaxRetries: retry,
 		Logger:     os.Stdout,
 		Delay:      time.Duration(1 * time.Second),
 		Source:     ContextTokenSource(),
+		ClientId:   client_id,
+		Sceret:     sceret,
 	}
 
 	httpClient := &http.Client{
 		Transport: transport,
 	}
 
-	client := &wrapper{new(fdi.Client)}
+	client := &Client{new(fdi.Client)}
 	client.Client.Client = httpClient
-	client.BaseURL = base
-	client.ReportURL = report
-
-	client.Driver = driver.DriverFDI
-
-	// initialize services
-	client.Payments = &paymentsService{client}
-	client.Info = &infoService{client}
-	client.Auth = &authService{client}
-	client.Balances = &BalanceService{client}
-
-	return client.Client, nil
-}
-
-type wrapper struct {
-	*fdi.Client
+	client.Client.BaseURL = base
+	client.Client.ReportURL = report
+	client.Client.Driver = driver.DriverFDI
+	return client, nil
 }
 
 // NewDefault returns a new FDI API client using the`
 // default "https://payments-api.fdibiz.com/v2" address.
-func NewDefault(callback string) *fdi.Client {
-	client, _ := New(baseUrl, callback, retry)
+func NewDefault(callback, client_id, sceret string) *Client {
+	client, _ := New(baseUrl, client_id, sceret, callback, retry)
 	return client
 }
 
 // do wraps the Client.Do function by creating the Request and
 // unmarshalling the response.
-func (c *wrapper) do(ctx context.Context, method, path string, in, out interface{}) (*fdi.Response, error) {
+func (c *Client) do(ctx context.Context, method, path string, in, out interface{}) (*fdi.Response, error) {
 	req := &fdi.Request{
 		Method: method,
 		Path:   path,

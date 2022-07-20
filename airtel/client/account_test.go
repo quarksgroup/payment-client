@@ -1,4 +1,4 @@
-package airtel
+package client
 
 import (
 	"context"
@@ -13,26 +13,22 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-var num = "72xxxxx"
-
-func TestCheck(t *testing.T) {
+func TestBalance(t *testing.T) {
 	defer gock.Off()
 
 	gock.New(baseUrl).
-		Get("/standard/v1/users/").
+		Get("/standard/v1/users/balance").
 		Reply(200).
 		Type("application/json").
-		File("testdata/check_number.json")
+		File("testdata/account.json")
 	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
-	got, _, err := client.CheckNumber.Check(context.Background(), num)
+	got, _, err := client.Balance(context.Background())
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(airtel.Number)
-
-	raw, _ := ioutil.ReadFile("testdata/check_number.json.golden")
-
+	want := new(airtel.Balance)
+	raw, _ := ioutil.ReadFile("testdata/account.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

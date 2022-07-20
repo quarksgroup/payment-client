@@ -1,4 +1,4 @@
-package airtel
+package client
 
 import (
 	"context"

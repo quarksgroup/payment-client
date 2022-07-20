@@ -22,15 +22,6 @@ type TokenSource interface {
 	Token(context.Context) (*Token, error)
 }
 
-// AuthService handles authentication to the underlying API
-type AuthService interface {
-	// Login with id and secret to the underlying API and get an JWT token
-	Login(context.Context, string, string) (*Token, *Response, error)
-
-	// Refresh the oauth2 token
-	Refresh(ctx context.Context, token *Token, force bool) (*Token, *Response, error)
-}
-
 // WithContext returns a copy of parent in which the token value is set
 func WithContext(parent context.Context, token *Token) context.Context {
 	return context.WithValue(parent, TokenKey{}, token)

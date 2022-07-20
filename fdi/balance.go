@@ -1,7 +1,5 @@
 package fdi
 
-import "context"
-
 // TODO: impelement balance service
 
 // Account  ...
@@ -21,10 +19,4 @@ type Data struct {
 type Balance struct {
 	Status string `json:"status"`
 	Data   Data   `json:"data"`
-}
-
-// BalanceService ...
-type BalanceService interface {
-	// Balance returns balanceInfo about it.
-	Balance(context.Context) (*Balance, *Response, error)
 }

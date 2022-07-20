@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"
@@ -6,14 +6,10 @@ import (
 	"github.com/quarksgroup/payment-client/fdi"
 )
 
-type BalanceService struct {
-	client *wrapper
-}
-
-func (s *BalanceService) Balance(ctx context.Context) (*fdi.Balance, *fdi.Response, error) {
+func (c *Client) Balance(ctx context.Context) (*fdi.Balance, *fdi.Response, error) {
 	endpoint := "balance/now"
 	out := new(balanceResponse)
-	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
+	res, err := c.do(ctx, "GET", endpoint, nil, out)
 	return convertBalance(out), res, err
 
 }
@@ -38,12 +34,12 @@ func convertBalance(res *balanceResponse) *fdi.Balance {
 	}
 
 	for _, item := range res.Data.Accounts {
-		account := &fdi.Account{
+		acc := &fdi.Account{
 			Currency:         item.Currency,
 			BalanceAvailable: item.BalanceAvailable,
 			BalanceActual:    item.BalanceActual,
 		}
-		data.Accounts = append(data.Accounts, *account)
+		data.Accounts = append(data.Accounts, *acc)
 	}
 
 	return &fdi.Balance{

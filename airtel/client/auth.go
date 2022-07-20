@@ -1,4 +1,4 @@
-package airtel
+package client
 
 import (
 	"context"
@@ -7,11 +7,7 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
-type authService struct {
-	client *wrapper
-}
-
-func (s *authService) Login(ctx context.Context, id, secret, grantType string) (*airtel.Token, *airtel.Response, error) {
+func (c *Client) Login(ctx context.Context, id, secret, grantType string) (*airtel.Token, *airtel.Response, error) {
 	endpoint := "auth/oauth2/token"
 	in := tokenRequest{
 		ClientId:     id,
@@ -19,7 +15,7 @@ func (s *authService) Login(ctx context.Context, id, secret, grantType string) (
 		GrantType:    grantType,
 	}
 	out := new(tokenResponse)
-	res, err := s.client.do(ctx, "POST", endpoint, in, out, nil)
+	res, err := c.do(ctx, "POST", endpoint, in, out, nil)
 	return convertToken(out), res, err
 }
 

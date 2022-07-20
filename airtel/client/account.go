@@ -1,4 +1,4 @@
-package airtel
+package client
 
 import (
 	"context"
@@ -6,14 +6,10 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
-type accountService struct {
-	client *wrapper
-}
-
-func (a *accountService) Balance(ctx context.Context) (*airtel.Balance, *airtel.Response, error) {
+func (c *Client) Balance(ctx context.Context) (*airtel.Balance, *airtel.Response, error) {
 	endpoint := "standard/v1/users/balance"
 	out := new(balanceResponse)
-	res, err := a.client.do(ctx, "GET", endpoint, nil, out, nil)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, nil)
 	return convertBalance(out), res, err
 
 }
