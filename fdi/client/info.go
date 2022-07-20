@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"
@@ -8,14 +8,10 @@ import (
 	"github.com/quarksgroup/payment-client/fdi"
 )
 
-type infoService struct {
-	client *wrapper
-}
-
-func (s *infoService) TransactionInfo(ctx context.Context, ref string) (*fdi.Info, *fdi.Response, error) {
+func (c *Client) TransactionInfo(ctx context.Context, ref string) (*fdi.Info, *fdi.Response, error) {
 	endpoint := fmt.Sprintf("momo/trx/%s/info", ref)
 	out := new(infoResponse)
-	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
+	res, err := c.do(ctx, "GET", endpoint, nil, out)
 	return convertInfo(out), res, err
 }
 

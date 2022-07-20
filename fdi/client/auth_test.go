@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"
@@ -21,9 +21,9 @@ func TestLogin(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/token.json")
-	client := NewDefault("https://test-callback.io")
+	client := NewDefault("https://test-callback.io", "client_id", "screte")
 
-	got, _, err := client.Auth.Login(context.Background(), "id", "secret")
+	got, _, err := client.Login(context.Background(), "id", "secret")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

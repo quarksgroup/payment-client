@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"
@@ -8,22 +8,18 @@ import (
 	"github.com/quarksgroup/payment-client/fdi"
 )
 
-type authService struct {
-	client *wrapper
-}
-
-func (s *authService) Login(ctx context.Context, id, secret string) (*fdi.Token, *fdi.Response, error) {
+func (c *Client) Login(ctx context.Context, id, secret string) (*fdi.Token, *fdi.Response, error) {
 	endpoint := "auth"
 	in := tokenRequest{
 		App:    id,
 		Secret: secret,
 	}
 	out := new(tokenResponse)
-	res, err := s.client.do(ctx, "POST", endpoint, in, out)
+	res, err := c.do(ctx, "POST", endpoint, in, out)
 	return convertToken(out), res, err
 }
 
-func (s *authService) Refresh(ctx context.Context, token *fdi.Token, force bool) (*fdi.Token, *fdi.Response, error) {
+func (c *Client) Refresh(ctx context.Context, token *fdi.Token, force bool) (*fdi.Token, *fdi.Response, error) {
 	return nil, nil, errors.New("refresh not implemented")
 }
 

@@ -1,4 +1,4 @@
-package airtel
+package client
 
 import (
 	"context"
@@ -30,7 +30,7 @@ func TestPull(t *testing.T) {
 		File("testdata/pull.json")
 	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
-	got, _, err := client.Payments.Pull(context.Background(), in)
+	got, _, err := client.Pull(context.Background(), in)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
@@ -61,7 +61,7 @@ func TestPush(t *testing.T) {
 		File("testdata/push.json")
 	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
-	got, _, err := client.Payments.Push(context.Background(), in)
+	got, _, err := client.Push(context.Background(), in)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

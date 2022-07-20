@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"
@@ -28,9 +28,9 @@ func TestPull(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/status.json")
-	client := NewDefault("https://test-callback.io")
+	client := NewDefault("https://test-callback.io", "client_id", "screte")
 
-	got, _, err := client.Payments.Pull(context.Background(), py)
+	got, _, err := client.Pull(context.Background(), py)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
@@ -59,9 +59,9 @@ func TestPush(t *testing.T) {
 		Reply(202).
 		Type("application/json").
 		File("testdata/status.json")
-	client := NewDefault("https://test-callback.io")
+	client := NewDefault("https://test-callback.io", "client_id", "screte")
 
-	got, _, err := client.Payments.Push(context.Background(), py)
+	got, _, err := client.Push(context.Background(), py)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

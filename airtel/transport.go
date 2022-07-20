@@ -20,13 +20,13 @@ const (
 // token if expired with max retry.
 //request that require authorization header by appending header on it roundTripper
 type RetryTransport struct {
-	Next                    http.RoundTripper
-	MaxRetries              int
-	Logger                  io.Writer
-	Delay                   time.Duration // delay between each retry
-	Source                  TokenSource
-	Scheme                  string
-	Auth                    AuthService
+	Next       http.RoundTripper
+	MaxRetries int
+	Logger     io.Writer
+	Delay      time.Duration // delay between each retry
+	Source     TokenSource
+	Scheme     string
+	// Auth                    AuthService
 	ClientId, Grant, Sceret string
 }
 
@@ -68,8 +68,6 @@ func (t RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		//Check if request response is not authorized.
 		if err == nil && res.StatusCode == http.StatusUnauthorized {
 			//Here this is where we referesh our token to renew it the implementation will go/called here
-			tk, _, _ := t.Auth.Login(ctx, t.ClientId, t.Sceret, t.Grant)
-			fmt.Println(tk)
 			res, err = t.Next.RoundTrip(req)
 		}
 

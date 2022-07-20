@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"

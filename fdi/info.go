@@ -1,7 +1,6 @@
 package fdi
 
 import (
-	"context"
 	"time"
 )
 
@@ -13,10 +12,4 @@ type Info struct {
 	Status    string
 	Type      string
 	CreatedAt time.Time
-}
-
-// InfoService returns information about a passed in item
-type InfoService interface {
-	// TransactionInfo takes a transaction's id and returns info about it.
-	TransactionInfo(context.Context, string) (*Info, *Response, error)
 }

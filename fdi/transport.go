@@ -13,20 +13,21 @@ const (
 	SchemeToken  = "token"
 )
 
-//ReteryTransport  is an http.RoundTrip that refreshes oauth
-// tokens, wrapping a base ReteryTransport and refreshing the
+//RetryTransport  is an http.RoundTrip that refreshes oauth
+// tokens, wrapping a base RetryTransport and refreshing the
 // token if expired with max retry.
 //request that require authorization header by appending header on it roundTripper
-type ReteryTransport struct {
-	Next       http.RoundTripper
-	MaxRetries int
-	Logger     io.Writer
-	Delay      time.Duration // delay between each retry
-	Source     TokenSource
-	Scheme     string
+type RetryTransport struct {
+	Next             http.RoundTripper
+	MaxRetries       int
+	Logger           io.Writer
+	Delay            time.Duration // delay between each retry
+	Source           TokenSource
+	Scheme           string
+	ClientId, Sceret string
 }
 
-func (t ReteryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	ctx := req.Context()
 
@@ -62,6 +63,7 @@ func (t ReteryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		//Check if request response is not authorized.
 		if err == nil && res.StatusCode == http.StatusUnauthorized {
 			//Here this is where we referesh our token to renew it
+			// t.Auth.Login(ctx, t.ClientId, t.Sceret)
 			res, err = t.Next.RoundTrip(req)
 		}
 
@@ -82,7 +84,7 @@ func (t ReteryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 }
 
-func (t *ReteryTransport) base() http.RoundTripper {
+func (t *RetryTransport) base() http.RoundTripper {
 	if t.Next != nil {
 		return t.Next
 	}
@@ -91,7 +93,7 @@ func (t *ReteryTransport) base() http.RoundTripper {
 
 // scheme returns the token scheme. If no scheme is
 // configured, the bearer scheme is used.
-func (t *ReteryTransport) scheme() string {
+func (t *RetryTransport) scheme() string {
 	if t.Scheme == "" {
 		return SchemeBearer
 	}

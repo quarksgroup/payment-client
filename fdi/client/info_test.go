@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"
@@ -23,9 +23,9 @@ func TestInfo(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/info.json")
-	client := NewDefault("https://test-callback.io")
+	client := NewDefault("https://test-callback.io", "client_id", "screte")
 
-	got, _, err := client.Info.TransactionInfo(context.Background(), ref)
+	got, _, err := client.TransactionInfo(context.Background(), ref)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

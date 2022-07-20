@@ -1,4 +1,4 @@
-package fdi
+package client
 
 import (
 	"context"
@@ -12,35 +12,31 @@ const (
 	Airtel fdi.Provider = "momo-airtel-rw"
 )
 
-type paymentsService struct {
-	client *wrapper
-}
-
-func (s *paymentsService) Pull(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
+func (c *Client) Pull(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
 	endpoint := "momo/pull"
 	in := &paymentRequest{
 		Ref:      py.ID,
 		MSISDN:   py.Wallet,
 		Amount:   py.Amount,
 		Channel:  string(py.Provider),
-		Callback: s.client.ReportURL.String(),
+		Callback: c.Client.ReportURL.String(),
 	}
 	out := new(paymentResponse)
-	res, err := s.client.do(ctx, "POST", endpoint, in, out)
+	res, err := c.do(ctx, "POST", endpoint, in, out)
 	return convertResponse(out), res, err
 }
 
-func (s *paymentsService) Push(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
+func (c *Client) Push(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
 	endpoint := "momo/push"
 	in := &paymentRequest{
 		Ref:      py.ID,
 		MSISDN:   py.Wallet,
 		Amount:   py.Amount,
 		Channel:  string(py.Provider),
-		Callback: s.client.ReportURL.String(),
+		Callback: c.Client.ReportURL.String(),
 	}
 	out := new(paymentResponse)
-	res, err := s.client.do(ctx, "POST", endpoint, in, out)
+	res, err := c.do(ctx, "POST", endpoint, in, out)
 	return convertResponse(out), res, err
 }
 
@@ -73,5 +69,3 @@ func convertResponse(res *paymentResponse) *fdi.Status {
 		State: res.Data.State,
 	}
 }
-
-var _ (fdi.PaymentsService) = (*paymentsService)(nil)
