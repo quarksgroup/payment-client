@@ -29,7 +29,7 @@ type wrapper struct {
 }
 
 // New creates a new payment.Client instance backed by the payment.DriverAirtel
-func New(uri, pin, currency, country string, retry int) (*airtel.Client, error) {
+func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*airtel.Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -38,12 +38,15 @@ func New(uri, pin, currency, country string, retry int) (*airtel.Client, error) 
 		base.Path = base.Path + "/"
 	}
 
-	transport := &airtel.Transport{
+	transport := &airtel.RetryTransport{
 		Next:       http.DefaultTransport,
 		MaxRetries: retry,
 		Logger:     os.Stdout,
 		Delay:      time.Duration(1 * time.Second),
 		Source:     ContextTokenSource(),
+		ClientId:   id,
+		Sceret:     sceret,
+		Grant:      grant,
 	}
 
 	httpClient := &http.Client{
@@ -58,6 +61,7 @@ func New(uri, pin, currency, country string, retry int) (*airtel.Client, error) 
 	client.Currency = currency
 	client.EncryptedPin = pin
 	client.Auth = &authService{client}
+	transport.Auth = &authService{client}
 	client.Driver = driver.DriverAirtel
 	client.Account = &accountService{client}
 	client.CheckNumber = &checkNumberService{client}
@@ -66,10 +70,11 @@ func New(uri, pin, currency, country string, retry int) (*airtel.Client, error) 
 	return client.Client, nil
 }
 
-// NewDefault returns a new AIRTEL API client using the`
+// NewDefault returns a new AIRTEL API client using the
+//But it take payment credential parameter
 // default "https://openapi.airtel.africa" address, country RW(Rwanda) and RWF(Rwandan franc).
-func NewDefault(pin string) *airtel.Client {
-	client, _ := New(baseUrl, pin, currency, country, retry)
+func NewDefault(pin, clientId, secret, grant string) *airtel.Client {
+	client, _ := New(baseUrl, pin, clientId, secret, grant, currency, country, retry)
 	return client
 }
 

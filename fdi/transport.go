@@ -13,11 +13,11 @@ const (
 	SchemeToken  = "token"
 )
 
-//Transport  is an http.RoundTrip that refreshes oauth
-// tokens, wrapping a base Transport and refreshing the
+//ReteryTransport  is an http.RoundTrip that refreshes oauth
+// tokens, wrapping a base ReteryTransport and refreshing the
 // token if expired with max retry.
 //request that require authorization header by appending header on it roundTripper
-type Transport struct {
+type ReteryTransport struct {
 	Next       http.RoundTripper
 	MaxRetries int
 	Logger     io.Writer
@@ -26,7 +26,7 @@ type Transport struct {
 	Scheme     string
 }
 
-func (t Transport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t ReteryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	ctx := req.Context()
 
@@ -82,7 +82,7 @@ func (t Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 }
 
-func (t *Transport) base() http.RoundTripper {
+func (t *ReteryTransport) base() http.RoundTripper {
 	if t.Next != nil {
 		return t.Next
 	}
@@ -91,7 +91,7 @@ func (t *Transport) base() http.RoundTripper {
 
 // scheme returns the token scheme. If no scheme is
 // configured, the bearer scheme is used.
-func (t *Transport) scheme() string {
+func (t *ReteryTransport) scheme() string {
 	if t.Scheme == "" {
 		return SchemeBearer
 	}

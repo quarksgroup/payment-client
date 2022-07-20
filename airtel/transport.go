@@ -15,20 +15,22 @@ const (
 	SchemeToken  = "token"
 )
 
-//Transport  is an http.RoundTrip that refreshes oauth
-// tokens, wrapping a base Transport and refreshing the
+//RetryTransport  is an http.RoundTrip that refreshes oauth
+// tokens, wrapping a base RetryTransport and refreshing the
 // token if expired with max retry.
 //request that require authorization header by appending header on it roundTripper
-type Transport struct {
-	Next       http.RoundTripper
-	MaxRetries int
-	Logger     io.Writer
-	Delay      time.Duration // delay between each retry
-	Source     TokenSource
-	Scheme     string
+type RetryTransport struct {
+	Next                    http.RoundTripper
+	MaxRetries              int
+	Logger                  io.Writer
+	Delay                   time.Duration // delay between each retry
+	Source                  TokenSource
+	Scheme                  string
+	Auth                    AuthService
+	ClientId, Grant, Sceret string
 }
 
-func (t Transport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	fmt.Fprintf(t.Logger, "[%s] Takes %s time %s %s\n", time.Now().Format(time.ANSIC), duration(time.Since(time.Now()), 2), req.Method, req.URL.String())
 
@@ -65,7 +67,9 @@ func (t Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 		//Check if request response is not authorized.
 		if err == nil && res.StatusCode == http.StatusUnauthorized {
-			//Here this is where we referesh our token to renew it tthe implementation will go/called here
+			//Here this is where we referesh our token to renew it the implementation will go/called here
+			tk, _, _ := t.Auth.Login(ctx, t.ClientId, t.Sceret, t.Grant)
+			fmt.Println(tk)
 			res, err = t.Next.RoundTrip(req)
 		}
 
@@ -86,7 +90,7 @@ func (t Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 }
 
-func (t *Transport) base() http.RoundTripper {
+func (t *RetryTransport) base() http.RoundTripper {
 	if t.Next != nil {
 		return t.Next
 	}
@@ -95,7 +99,7 @@ func (t *Transport) base() http.RoundTripper {
 
 // scheme returns the token scheme. If no scheme is
 // configured, the bearer scheme is used.
-func (t *Transport) scheme() string {
+func (t *RetryTransport) scheme() string {
 	if t.Scheme == "" {
 		return SchemeBearer
 	}

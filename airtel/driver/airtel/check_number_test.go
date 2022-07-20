@@ -23,7 +23,7 @@ func TestCheck(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/check_number.json")
-	client := NewDefault("encrypted-pin")
+	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	got, _, err := client.CheckNumber.Check(context.Background(), num)
 

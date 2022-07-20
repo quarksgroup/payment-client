@@ -34,7 +34,7 @@ func New(uri, callback string, retry int) (*fdi.Client, error) {
 		return nil, err
 	}
 
-	transport := &fdi.Transport{
+	transport := &fdi.ReteryTransport{
 		Next:       http.DefaultTransport,
 		MaxRetries: retry,
 		Logger:     os.Stdout,

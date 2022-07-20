@@ -28,7 +28,7 @@ func TestPull(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/pull.json")
-	client := NewDefault("encrypted-pin")
+	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	got, _, err := client.Payments.Pull(context.Background(), in)
 
@@ -59,7 +59,7 @@ func TestPush(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/push.json")
-	client := NewDefault("encrypted-pin")
+	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	got, _, err := client.Payments.Push(context.Background(), in)
 
