@@ -21,7 +21,7 @@ func TestBalance(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/account.json")
-	client := NewDefault("encrypted-pin")
+	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	got, _, err := client.Account.Balance(context.Background())
 
