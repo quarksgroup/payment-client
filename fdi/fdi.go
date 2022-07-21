@@ -33,6 +33,12 @@ type Client struct {
 	// ReportURL is the url to callback for payment reports
 	ReportURL *url.URL
 
+	// Account crendential
+	Client_id, Client_Sceret *string
+
+	//Token for client request
+	Token *Token
+
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.
 	// This can be set to httputil.DumpResponse.

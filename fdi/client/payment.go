@@ -13,6 +13,11 @@ const (
 )
 
 func (c *Client) Pull(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
+
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
 	endpoint := "momo/pull"
 	in := &paymentRequest{
 		Ref:      py.ID,
@@ -27,6 +32,11 @@ func (c *Client) Pull(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.R
 }
 
 func (c *Client) Push(ctx context.Context, py *fdi.Payment) (*fdi.Status, *fdi.Response, error) {
+
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
 	endpoint := "momo/push"
 	in := &paymentRequest{
 		Ref:      py.ID,

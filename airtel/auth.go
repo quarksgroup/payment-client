@@ -2,15 +2,14 @@ package airtel
 
 import (
 	"context"
-	"time"
 )
 
 // Token represents the credentials used to authorize
 // the requests to access protected resources.
 type Token struct {
-	Token   string    `json:"token"`
-	Type    string    `json:"token_type"`
-	Expires time.Time `json:"expires"`
+	Token   string `json:"token"`
+	Type    string `json:"token_type"`
+	Expires int64  `json:"expires"`
 }
 
 // TokenKey is the key to use with the context.WithValue

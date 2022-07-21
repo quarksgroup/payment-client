@@ -10,6 +10,10 @@ import (
 //Push...
 func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
 
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
 	endpoint := "merchant/v1/payments/"
 
 	sub := &subscriber{
@@ -50,6 +54,10 @@ func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status,
 
 //Pull...
 func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
+
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
 
 	endpoint := "standard/v1/disbursements/"
 

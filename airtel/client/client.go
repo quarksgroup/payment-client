@@ -28,7 +28,7 @@ type Client struct {
 }
 
 // New creates a new payment.Client instance backed by the payment.DriverAirtel
-func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*Client, error) {
+func New(uri, pin, clientId, clientSceret, grant, currency, country string, retry int) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -43,9 +43,6 @@ func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*Cli
 		Logger:     os.Stdout,
 		Delay:      time.Duration(1 * time.Second),
 		Source:     ContextTokenSource(),
-		ClientId:   id,
-		Sceret:     sceret,
-		Grant:      grant,
 	}
 
 	httpClient := &http.Client{
@@ -59,6 +56,16 @@ func New(uri, pin, id, sceret, grant, currency, country string, retry int) (*Cli
 	client.UserAgent = userAgent
 	client.Currency = currency
 	client.EncryptedPin = pin
+	client.ClientId = &clientId
+	client.ClientSceret = &clientSceret
+	client.GrantType = &grant
+
+	tk, _, err := client.login(context.Background(), clientId, clientSceret, grant)
+
+	if err != nil {
+		return nil, err
+	}
+	client.Token = tk
 
 	return client, nil
 }

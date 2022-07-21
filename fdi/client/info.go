@@ -9,6 +9,11 @@ import (
 )
 
 func (c *Client) TransactionInfo(ctx context.Context, ref string) (*fdi.Info, *fdi.Response, error) {
+
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
 	endpoint := fmt.Sprintf("momo/trx/%s/info", ref)
 	out := new(infoResponse)
 	res, err := c.do(ctx, "GET", endpoint, nil, out)

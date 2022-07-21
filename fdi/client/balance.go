@@ -7,6 +7,11 @@ import (
 )
 
 func (c *Client) Balance(ctx context.Context) (*fdi.Balance, *fdi.Response, error) {
+
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
 	endpoint := "balance/now"
 	out := new(balanceResponse)
 	res, err := c.do(ctx, "GET", endpoint, nil, out)
