@@ -1,3 +1,4 @@
+//account.go contain the implementation of airtel protal account information
 package client
 
 import (
@@ -6,6 +7,7 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
+//Balance responsible for returning the airtel account balance
 func (c *Client) Balance(ctx context.Context) (*airtel.Balance, *airtel.Response, error) {
 
 	if err := c.renewToken(ctx); err != nil {

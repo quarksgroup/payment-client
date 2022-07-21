@@ -1,3 +1,4 @@
+// info.go contain implementation logic of different query for certain details
 package client
 
 import (

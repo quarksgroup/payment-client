@@ -23,7 +23,7 @@ type Client struct {
 	*fdi.Client
 }
 
-// New creates a new fdi.Client instance backed by the fdi.DriverFDI
+// New creates a new fdi.Client instance backed by the  http.Client instance
 func New(uri, client_id, sceret, callback string, retry int) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
@@ -75,7 +75,7 @@ func NewDefault(callback, client_id, sceret string) *Client {
 }
 
 // do wraps the Client.Do function by creating the Request and
-// unmarshalling the response.
+// unmarshalling the response according to user wish expected output.
 func (c *Client) do(ctx context.Context, method, path string, in, out interface{}) (*fdi.Response, error) {
 	req := &fdi.Request{
 		Method: method,
@@ -121,7 +121,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	return res, json.NewDecoder(res.Body).Decode(out)
 }
 
-// Error represents a Github error.
+// Error represents a fdi error.
 type Err struct {
 	Status string `json:"status"`
 	Data   struct {

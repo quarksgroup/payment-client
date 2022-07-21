@@ -1,3 +1,5 @@
+// payment.go this responsible for the implementation of refund and credit from your airtel portal or to your portal
+// from or to specific phone account and vise-versa
 package client
 
 import (
@@ -7,7 +9,7 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
-//Push...
+//Push this is responsible for the implementation of cash collection to your airtel portal from phone wallet
 func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
 
 	if err := c.renewToken(ctx); err != nil {
@@ -52,7 +54,7 @@ func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status,
 	return convertPush(out), res, err
 }
 
-//Pull...
+// Pull this is responsible for cash distribution or disbursements from your phone wallet to your airtel portal
 func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
 
 	if err := c.renewToken(ctx); err != nil {

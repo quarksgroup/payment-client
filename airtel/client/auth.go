@@ -6,6 +6,7 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
+//login responsible client api authentication to your airtel account portal but doesn't exposed outside
 func (c *Client) login(ctx context.Context, id, secret, grantType string) (*airtel.Token, *airtel.Response, error) {
 	endpoint := "auth/oauth2/token"
 	in := tokenRequest{

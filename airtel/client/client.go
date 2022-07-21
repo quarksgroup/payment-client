@@ -14,6 +14,7 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
+//This is const value for default configuration of airtel client
 const (
 	baseUrl   = "https://openapi.airtel.africa"
 	currency  = "RWF"
@@ -22,12 +23,12 @@ const (
 	retry     = 3
 )
 
-//This Client all client implentation of airtel
+//This Client all client implentation of airtel.CLient
 type Client struct {
 	*airtel.Client
 }
 
-// New creates a new payment.Client instance backed by the payment.DriverAirtel
+// New creates a new airtel.Client instance backed by the http.Client
 func New(uri, pin, clientId, clientSceret, grant, currency, country string, retry int) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
@@ -70,8 +71,8 @@ func New(uri, pin, clientId, clientSceret, grant, currency, country string, retr
 	return client, nil
 }
 
-// NewDefault returns a new AIRTEL API client using the
-//But it take payment credential parameter
+// NewDefault returns a new AIRTEL API client using the http.Client
+// But it take payment credential parameter
 // default "https://openapi.airtel.africa" address, country RW(Rwanda) and RWF(Rwandan franc).
 func NewDefault(pin, clientId, secret, grant string) *Client {
 	client, _ := New(baseUrl, pin, clientId, secret, grant, currency, country, retry)
@@ -79,7 +80,7 @@ func NewDefault(pin, clientId, secret, grant string) *Client {
 }
 
 // do wraps the Client.Do function by creating the Request and
-// unmarshalling the response.
+// unmarshalling the response according to user expected output.
 func (c *Client) do(ctx context.Context, method, path string, in, out interface{}, headers http.Header) (*airtel.Response, error) {
 	req := &airtel.Request{
 		Method: method,
@@ -108,7 +109,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 		req.Header.Set("User-Agent", c.UserAgent)
 	}
 
-	// execute the http request
+	// execute the http request using airtel.Client.Do()
 	res, err := c.Client.Do(ctx, req)
 
 	if err != nil {
@@ -138,7 +139,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	return res, json.NewDecoder(res.Body).Decode(out)
 }
 
-// Error represents a Github error.
+// Error represents airtel error.
 type Err struct {
 	Error            string `json:"error"`
 	ErrorDescprition string `json:"error_description"`
