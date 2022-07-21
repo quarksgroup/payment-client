@@ -25,7 +25,7 @@ func TestCheck(t *testing.T) {
 		File("testdata/check_number.json")
 	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
-	got, _, err := client.Check(context.Background(), num)
+	got, _, err := client.NumberInfo(context.Background(), num)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
