@@ -69,9 +69,12 @@ func New(uri, client_id, sceret, callback string, retry int) (*Client, error) {
 
 // NewDefault returns a new FDI API client using the`
 // default "https://payments-api.fdibiz.com/v2" address.
-func NewDefault(callback, client_id, sceret string) *Client {
-	client, _ := New(baseUrl, client_id, sceret, callback, retry)
-	return client
+func NewDefault(callback, client_id, sceret string) (*Client, error) {
+	client, err := New(baseUrl, client_id, sceret, callback, retry)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
 
 // do wraps the Client.Do function by creating the Request and
