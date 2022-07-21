@@ -61,12 +61,12 @@ func New(uri, pin, clientId, clientSceret, grant, currency, country string, retr
 	client.ClientSceret = &clientSceret
 	client.GrantType = &grant
 
-	tk, _, err := client.login(context.Background(), clientId, clientSceret, grant)
+	token, _, err := client.login(context.Background(), clientId, clientSceret, grant)
 
 	if err != nil {
 		return nil, err
 	}
-	client.Token = tk
+	client.Token = token
 
 	return client, nil
 }
@@ -74,9 +74,8 @@ func New(uri, pin, clientId, clientSceret, grant, currency, country string, retr
 // NewDefault returns a new AIRTEL API client using the http.Client
 // But it take payment credential parameter
 // default "https://openapi.airtel.africa" address, country RW(Rwanda) and RWF(Rwandan franc).
-func NewDefault(pin, clientId, secret, grant string) *Client {
-	client, _ := New(baseUrl, pin, clientId, secret, grant, currency, country, retry)
-	return client
+func NewDefault(pin, clientId, secret, grant string) (*Client, error) {
+	return New(baseUrl, pin, clientId, secret, grant, currency, country, retry)
 }
 
 // do wraps the Client.Do function by creating the Request and
