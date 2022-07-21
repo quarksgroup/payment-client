@@ -28,7 +28,9 @@ func TestPull(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/status.json")
-	client := NewDefault("https://test-callback.io", "client_id", "screte")
+	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
+
+	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
 	got, _, err := client.Pull(context.Background(), py)
 
@@ -59,7 +61,9 @@ func TestPush(t *testing.T) {
 		Reply(202).
 		Type("application/json").
 		File("testdata/status.json")
-	client := NewDefault("https://test-callback.io", "client_id", "screte")
+	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
+
+	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
 	got, _, err := client.Push(context.Background(), py)
 
