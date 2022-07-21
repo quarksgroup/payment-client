@@ -1,3 +1,5 @@
+//airtel this is where we define the client instance that hold airtel payment method for different
+//services of https://openapi.airtel.africa as airtel payment provider gateway
 package airtel
 
 import (
