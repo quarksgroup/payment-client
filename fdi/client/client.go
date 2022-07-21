@@ -43,8 +43,6 @@ func New(uri, client_id, sceret, callback string, retry int) (*Client, error) {
 		Logger:     os.Stdout,
 		Delay:      time.Duration(1 * time.Second),
 		Source:     ContextTokenSource(),
-		ClientId:   client_id,
-		Sceret:     sceret,
 	}
 
 	httpClient := &http.Client{
@@ -55,6 +53,17 @@ func New(uri, client_id, sceret, callback string, retry int) (*Client, error) {
 	client.Client.Client = httpClient
 	client.Client.BaseURL = base
 	client.Client.ReportURL = report
+	client.Client.Client_id = &client_id
+	client.Client.Client_Sceret = &sceret
+
+	tk, _, err := client.login(context.Background(), client_id, sceret)
+
+	if err != nil {
+		return nil, err
+	}
+
+	client.Client.Token = tk
+
 	return client, nil
 }
 

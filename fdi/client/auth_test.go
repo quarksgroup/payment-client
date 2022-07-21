@@ -23,7 +23,7 @@ func TestLogin(t *testing.T) {
 		File("testdata/token.json")
 	client := NewDefault("https://test-callback.io", "client_id", "screte")
 
-	got, _, err := client.Login(context.Background(), "id", "secret")
+	got, _, err := client.login(context.Background(), "id", "secret")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

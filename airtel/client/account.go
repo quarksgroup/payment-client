@@ -7,6 +7,11 @@ import (
 )
 
 func (c *Client) Balance(ctx context.Context) (*airtel.Balance, *airtel.Response, error) {
+
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
 	endpoint := "standard/v1/users/balance"
 	out := new(balanceResponse)
 	res, err := c.do(ctx, "GET", endpoint, nil, out, nil)

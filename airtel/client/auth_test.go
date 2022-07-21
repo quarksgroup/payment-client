@@ -23,7 +23,7 @@ func TestLogin(t *testing.T) {
 		File("testdata/auth.json")
 	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
-	got, _, err := client.Login(context.Background(), "id", "secret", "grant_type")
+	got, _, err := client.login(context.Background(), "id", "secret", "grant_type")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

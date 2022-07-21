@@ -44,6 +44,12 @@ type Client struct {
 	//Currency is the currency eg RWF
 	Currency string
 
+	//Token is airtel auth token
+	Token *Token
+
+	//Client auth credential params
+	ClientId, ClientSceret, GrantType *string
+
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.
 	// This can be set to httputil.DumpResponse.

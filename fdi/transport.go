@@ -18,13 +18,12 @@ const (
 // token if expired with max retry.
 //request that require authorization header by appending header on it roundTripper
 type RetryTransport struct {
-	Next             http.RoundTripper
-	MaxRetries       int
-	Logger           io.Writer
-	Delay            time.Duration // delay between each retry
-	Source           TokenSource
-	Scheme           string
-	ClientId, Sceret string
+	Next       http.RoundTripper
+	MaxRetries int
+	Logger     io.Writer
+	Delay      time.Duration // delay between each retry
+	Source     TokenSource
+	Scheme     string
 }
 
 func (t RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {

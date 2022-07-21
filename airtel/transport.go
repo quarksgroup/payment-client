@@ -26,8 +26,6 @@ type RetryTransport struct {
 	Delay      time.Duration // delay between each retry
 	Source     TokenSource
 	Scheme     string
-	// Auth                    AuthService
-	ClientId, Grant, Sceret string
 }
 
 func (t RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {

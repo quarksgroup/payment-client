@@ -8,7 +8,7 @@ import (
 	"github.com/quarksgroup/payment-client/fdi"
 )
 
-func (c *Client) Login(ctx context.Context, id, secret string) (*fdi.Token, *fdi.Response, error) {
+func (c *Client) login(ctx context.Context, id, secret string) (*fdi.Token, *fdi.Response, error) {
 	endpoint := "auth"
 	in := tokenRequest{
 		App:    id,

@@ -10,6 +10,10 @@ import (
 
 func (c *Client) Check(ctx context.Context, phone string) (*airtel.Number, *airtel.Response, error) {
 
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
 	endpoint := fmt.Sprintf("standard/v1/users/%s", phone)
 
 	header := http.Header{

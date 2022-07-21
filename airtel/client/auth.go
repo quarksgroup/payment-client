@@ -2,12 +2,11 @@ package client
 
 import (
 	"context"
-	"time"
 
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
-func (c *Client) Login(ctx context.Context, id, secret, grantType string) (*airtel.Token, *airtel.Response, error) {
+func (c *Client) login(ctx context.Context, id, secret, grantType string) (*airtel.Token, *airtel.Response, error) {
 	endpoint := "auth/oauth2/token"
 	in := tokenRequest{
 		ClientId:     id,
@@ -33,11 +32,11 @@ type tokenResponse struct {
 
 func convertToken(tk *tokenResponse) *airtel.Token {
 
-	expires := time.Now().Local().Add(180 * time.Second)
+	// expires := time.Now().Local().Add(180 * time.Second)
 
 	return &airtel.Token{
 		Token:   tk.AccessToken,
 		Type:    tk.TokenType,
-		Expires: expires,
+		Expires: tk.Expires,
 	}
 }
