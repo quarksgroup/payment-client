@@ -21,7 +21,9 @@ func TestLogin(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/auth.json")
-	client := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
+	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
+
+	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
 	got, _, err := client.login(context.Background(), "id", "secret", "grant_type")
 
