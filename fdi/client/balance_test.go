@@ -21,7 +21,9 @@ func TestBalance(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/balance.json")
-	client := NewDefault("https://test-callback.io", "client_id", "screte")
+	client, err := NewDefault("https://test-callback.io", "client_id", "secret")
+
+	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
 	got, _, err := client.Balance(context.Background())
 
