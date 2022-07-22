@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/nbio/st"
 	"github.com/quarksgroup/payment-client/fdi"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -15,6 +16,9 @@ import (
 
 func TestPull(t *testing.T) {
 	defer gock.Off()
+
+	//For debugging proposer mode
+	gock.Observe(gock.DumpRequest)
 
 	py := &fdi.Payment{
 		ID:       "xxxx",
@@ -28,7 +32,10 @@ func TestPull(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/status.json")
-	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
+
+	AuthClientMock()
+
+	client, err := NewDefault("https://test-callback.io", "client_id", "client_sceret")
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
@@ -44,10 +51,16 @@ func TestPull(t *testing.T) {
 		t.Errorf("Unexpected Results")
 		t.Log(diff)
 	}
+
+	// Verify that we don't have pending mocks
+	st.Expect(t, gock.IsDone(), true)
 }
 
 func TestPush(t *testing.T) {
 	defer gock.Off()
+
+	//For debugging proposer mode
+	gock.Observe(gock.DumpRequest)
 
 	py := &fdi.Payment{
 		ID:       "xxxx",
@@ -61,6 +74,9 @@ func TestPush(t *testing.T) {
 		Reply(202).
 		Type("application/json").
 		File("testdata/status.json")
+
+	AuthClientMock()
+
 	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
