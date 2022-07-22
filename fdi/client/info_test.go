@@ -23,6 +23,9 @@ func TestInfo(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/info.json")
+
+	AuthClientMock()
+
 	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
