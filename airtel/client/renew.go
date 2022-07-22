@@ -9,7 +9,7 @@ import (
 //renewToken responsible to check client token and renew it if is expired
 func (c *Client) renewToken(ctx context.Context) error {
 
-	fmt.Println(c.Token.Token)
+	fmt.Println(c.Token)
 
 	//Check if the token is still valid and refresh it if expired
 	if !time.Unix(c.Token.Expires, 0).After(time.Now().UTC().Add(-time.Second * 30)) {

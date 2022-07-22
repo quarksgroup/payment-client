@@ -15,12 +15,12 @@ import (
 
 func TestLogin(t *testing.T) {
 	defer gock.Off()
+	gock.Observe(gock.DumpRequest)
 
 	gock.New("https://payments-api.fdibiz.com/v2").
 		Post("/auth").
 		Reply(200).
 		Type("application/json").
-		SetHeader("Authorization", "Bearer jkaksasuiuds").
 		File("testdata/token.json")
 	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
 
@@ -38,4 +38,18 @@ func TestLogin(t *testing.T) {
 		t.Errorf("Unexpected Results")
 		t.Log(diff)
 	}
+}
+
+func AuthClientMock() {
+	gock.New("https://payments-api.fdibiz.com/v2").
+		Post("/auth").
+		Reply(200).
+		Type("application/json").
+		File("testdata/token.json")
+
+	gock.New("https://payments-api.fdibiz.com/v2").
+		Post("/auth").
+		Reply(200).
+		Type("application/json").
+		File("testdata/token.json")
 }

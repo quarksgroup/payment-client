@@ -16,11 +16,17 @@ import (
 func TestBalance(t *testing.T) {
 	defer gock.Off()
 
+	//For debugging
+	gock.Observe(gock.DumpRequest)
+
 	gock.New("https://payments-api.fdibiz.com/v2").
 		Get("/balance/now").
 		Reply(200).
 		Type("application/json").
 		File("testdata/balance.json")
+
+	AuthClientMock()
+
 	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
