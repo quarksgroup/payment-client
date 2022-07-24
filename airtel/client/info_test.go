@@ -23,6 +23,9 @@ func TestCheck(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/check_number.json")
+
+	AuthClientMock()
+
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))

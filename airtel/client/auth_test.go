@@ -38,3 +38,17 @@ func TestLogin(t *testing.T) {
 		t.Log(diff)
 	}
 }
+
+func AuthClientMock() {
+	gock.New(baseUrl).
+		Post("/auth/oauth2/token").
+		Reply(200).
+		Type("application/json").
+		File("testdata/auth.json")
+
+	gock.New(baseUrl).
+		Post("/auth/oauth2/token").
+		Reply(200).
+		Type("application/json").
+		File("testdata/auth.json")
+}

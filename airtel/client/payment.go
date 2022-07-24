@@ -133,8 +133,8 @@ type pushResponse struct {
 func convertPush(res *pushResponse) *airtel.Status {
 	return &airtel.Status{
 		Ref:          res.Data.Transaction.Id,
-		Status:       res.Data.Transaction.Status,
-		ResponseCode: res.Status.ResponseCode,
+		Status:       res.Status.Success,
+		ResponseCode: res.Status.Result_code,
 		Message:      res.Status.Message,
 	}
 }
@@ -163,7 +163,7 @@ type pullResponse struct {
 func convertPull(res *pullResponse) *airtel.Status {
 	return &airtel.Status{
 		Ref:          res.Data.Transaction.Id,
-		Status:       res.Data.Transaction.Status,
+		Status:       res.Status.Success,
 		ResponseCode: res.Status.ResponseCode,
 		Message:      res.Status.Message,
 	}

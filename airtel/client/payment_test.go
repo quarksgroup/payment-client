@@ -28,6 +28,9 @@ func TestPull(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/pull.json")
+
+	AuthClientMock()
+
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
@@ -61,6 +64,9 @@ func TestPush(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/push.json")
+
+	AuthClientMock()
+
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
@@ -70,7 +76,9 @@ func TestPush(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
 	want := new(airtel.Status)
+
 	raw, _ := ioutil.ReadFile("testdata/push.json.golden")
+
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
