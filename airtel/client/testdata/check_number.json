@@ -1,0 +1,20 @@
+{
+  "data": {
+      "is_barred": false,
+      "grade": "$GRADE",
+      "last_name": "John",
+      "registration": {
+          "id": "119648047XXXXXXXXXX",
+          "status": "SUBS"
+      },
+      "msisdn": "722123205",
+      "first_name": "Doe",
+      "is_pin_set": true
+  },
+  "status": {
+      "code": "200",
+      "success": true,
+      "result_code": "ESB000010",
+      "message": "SUCCESS"
+  }
+}
