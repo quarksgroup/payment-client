@@ -107,7 +107,7 @@ type txInfo struct {
 func convertTxInfo(res *txInfo, kind airtel.Kind) *airtel.TxInfo {
 	return &airtel.TxInfo{
 		Ref:    res.Data.Transaction.Id,
-		Status: convertTxStatus(res.Data.Transaction.Status),
+		Status: airtel.ConvertStatus(res.Data.Transaction.Status),
 		Type:   kind,
 	}
 }
@@ -141,28 +141,5 @@ func convertNumberInfo(res *checkResponse) *airtel.Number {
 		LastName:  res.Data.LastName,
 		Status:    res.Status.Success,
 		HasPin:    res.Data.IsPinSet,
-	}
-}
-
-const (
-	ts  = "TS"  //Transaction Success
-	tf  = "TF"  //Transaction Failed
-	ta  = "TA"  //Transaction Ambiguous
-	tip = "TIP" //Transaction in Progress
-)
-
-//convertTxStatus convert transaction status to common status value
-func convertTxStatus(status string) string {
-	switch status {
-	case ts:
-		return "successful"
-	case tf:
-		return "failed"
-	case ta:
-		return "failed"
-	case tip:
-		return "pending"
-	default:
-		return "failed"
 	}
 }

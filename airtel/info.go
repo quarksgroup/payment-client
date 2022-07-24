@@ -1,5 +1,7 @@
 package airtel
 
+import "strings"
+
 type Kind string
 
 const (
@@ -21,4 +23,29 @@ type TxInfo struct {
 	Ref    string
 	Status string
 	Type   Kind
+}
+
+//Abrivated transaction status
+const (
+	Ts  = "TS"  //Transaction Success
+	Tf  = "TF"  //Transaction Failed
+	Ta  = "TA"  //Transaction Ambiguous
+	Tip = "TIP" //Transaction in Progress
+)
+
+//ConvertStatus convert transaction status to common status value
+func ConvertStatus(status string) string {
+
+	switch strings.ToUpper(status) {
+	case Ts:
+		return "successful"
+	case Tf:
+		return "failed"
+	case Ta:
+		return "failed"
+	case Tip:
+		return "pending"
+	default:
+		return "failed"
+	}
 }

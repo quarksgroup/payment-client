@@ -11,7 +11,7 @@ type Payment struct {
 // Status reports the status of a requested transaction
 type Status struct {
 	Ref          string `json:"ref"`
-	Status       bool   `json:"status"`
+	Status       string `json:"status"`
 	Message      string `json:"message"`
 	ResponseCode string `json:"response_code"`
 }
