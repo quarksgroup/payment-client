@@ -27,23 +27,23 @@ type TxInfo struct {
 
 //Abrivated transaction status
 const (
-	Ts  = "TS"  //Transaction Success
-	Tf  = "TF"  //Transaction Failed
-	Ta  = "TA"  //Transaction Ambiguous
-	Tip = "TIP" //Transaction in Progress
+	ts  = "TS"  //Transaction Success
+	tf  = "TF"  //Transaction Failed
+	ta  = "TA"  //Transaction Ambiguous
+	tip = "TIP" //Transaction in Progress
 )
 
 //ConvertStatus convert transaction status to common status value
 func ConvertStatus(status string) string {
 
 	switch strings.ToUpper(status) {
-	case Ts:
+	case ts:
 		return "successful"
-	case Tf:
+	case tf:
 		return "failed"
-	case Ta:
+	case ta:
 		return "failed"
-	case Tip:
+	case tip:
 		return "pending"
 	default:
 		return "failed"
