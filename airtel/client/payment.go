@@ -9,8 +9,8 @@ import (
 	"github.com/quarksgroup/payment-client/airtel"
 )
 
-//Push this is responsible for the implementation of cash collection to your airtel portal from phone wallet
-func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
+//Pull this is responsible for the implementation of cash collection to your airtel portal from phone wallet
+func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
 
 	if err := c.renewToken(ctx); err != nil {
 		return nil, nil, err
@@ -29,50 +29,11 @@ func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status,
 		Amount: req.Amount,
 	}
 
-	in := &pushRequest{
+	in := &pullRequest{
 		Reference:   req.Ref,
 		Transaction: tx,
 		Subscriber:  sub,
 	}
-
-	header := http.Header{
-		"X-country":  []string{c.Client.Country},
-		"X-Currency": []string{c.Client.Currency},
-	}
-
-	out := new(pushResponse)
-
-	res, err := c.do(ctx, "POST", endpoint, in, out, header)
-
-	if err != nil {
-		return nil, nil, err
-	}
-	// if !out.Status.Success {
-	// 	return nil, nil, &airtel.Error{Code: http.StatusBadRequest, Message: out.Status.Message}
-	// }
-
-	return convertPush(out), res, err
-}
-
-// Pull this is responsible for cash distribution or disbursements from your phone wallet to your airtel portal
-func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
-
-	if err := c.renewToken(ctx); err != nil {
-		return nil, nil, err
-	}
-
-	endpoint := "standard/v1/disbursements/"
-
-	tx := &tx{
-		Id:     req.ID,
-		Amount: req.Amount,
-	}
-	in := &pullRequest{
-		Reference:   req.Ref,
-		Pin:         c.Client.EncryptedPin,
-		Transaction: tx,
-	}
-	in.Payee.Msisdn = req.Phone
 
 	header := http.Header{
 		"X-country":  []string{c.Client.Country},
@@ -87,7 +48,51 @@ func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status,
 		return nil, nil, err
 	}
 
+	if !out.Status.Success {
+		return nil, nil, &airtel.Error{Code: http.StatusBadRequest, Message: out.Status.Message}
+	}
+
 	return convertPull(out), res, err
+}
+
+// Push this is responsible for cash distribution or disbursements from your phone wallet to your airtel portal
+func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
+
+	if err := c.renewToken(ctx); err != nil {
+		return nil, nil, err
+	}
+
+	endpoint := "standard/v1/disbursements/"
+
+	tx := &tx{
+		Id:     req.ID,
+		Amount: req.Amount,
+	}
+	in := &pushRequest{
+		Reference:   req.Ref,
+		Pin:         c.Client.EncryptedPin,
+		Transaction: tx,
+	}
+	in.Payee.Msisdn = req.Phone
+
+	header := http.Header{
+		"X-country":  []string{c.Client.Country},
+		"X-Currency": []string{c.Client.Currency},
+	}
+
+	out := new(pushResponse)
+
+	res, err := c.do(ctx, "POST", endpoint, in, out, header)
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if !out.Status.Success {
+		return nil, nil, &airtel.Error{Code: http.StatusBadRequest, Message: out.Status.Message}
+	}
+
+	return convertPush(out), res, err
 }
 
 //subscriber...
@@ -103,8 +108,8 @@ type tx struct {
 	Amount int64  `json:"amount"`
 }
 
-//pushRequest represent push collection request payload
-type pushRequest struct {
+//pullRequest represent push collection request payload
+type pullRequest struct {
 	Reference   string      `json:"reference"`
 	Subscriber  *subscriber `json:"subscriber"`
 	Transaction *tx         `json:"transaction"`
@@ -119,36 +124,6 @@ type status struct {
 	Message      string `json:"message"`
 }
 
-//pushResponse represents push collection response body
-type pushResponse struct {
-	Data struct {
-		Transaction struct {
-			Id     string `json:"id"`
-			Status string `json:"status"`
-		} `json:"transaction"`
-	} `json:"data"`
-	Status *status `json:"status"`
-}
-
-func convertPush(res *pushResponse) *airtel.Status {
-	return &airtel.Status{
-		Ref:          res.Data.Transaction.Id,
-		Status:       res.Status.Success,
-		ResponseCode: res.Status.Result_code,
-		Message:      res.Status.Message,
-	}
-}
-
-//pullRequest represent push collection request payload
-type pullRequest struct {
-	Reference string `json:"reference"`
-	Pin       string `json:"pin"`
-	Payee     struct {
-		Msisdn string `json:"msisdn"`
-	} `json:"payee"`
-	Transaction *tx `json:"transaction"`
-}
-
 //pullResponse represents push collection response body
 type pullResponse struct {
 	Data struct {
@@ -161,6 +136,36 @@ type pullResponse struct {
 }
 
 func convertPull(res *pullResponse) *airtel.Status {
+	return &airtel.Status{
+		Ref:          res.Data.Transaction.Id,
+		Status:       res.Status.Success,
+		ResponseCode: res.Status.Result_code,
+		Message:      res.Status.Message,
+	}
+}
+
+//pushRequest represent push collection request payload
+type pushRequest struct {
+	Reference string `json:"reference"`
+	Pin       string `json:"pin"`
+	Payee     struct {
+		Msisdn string `json:"msisdn"`
+	} `json:"payee"`
+	Transaction *tx `json:"transaction"`
+}
+
+//pushResponse represents push collection response body
+type pushResponse struct {
+	Data struct {
+		Transaction struct {
+			Id     string `json:"id"`
+			Status string `json:"status"`
+		} `json:"transaction"`
+	} `json:"data"`
+	Status *status `json:"status"`
+}
+
+func convertPush(res *pushResponse) *airtel.Status {
 	return &airtel.Status{
 		Ref:          res.Data.Transaction.Id,
 		Status:       res.Status.Success,
