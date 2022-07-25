@@ -11,11 +11,11 @@ const (
 
 // Number represents information about a phone number details
 type Number struct {
-	Phone     string
-	FirstName string
-	LastName  string
-	Status    bool
-	HasPin    bool
+	Phone     string `json:"phone"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Status    bool   `json:"status"`
+	HasPin    bool   `json:"has_pin"`
 }
 
 //TxInfo respresent information about transaction

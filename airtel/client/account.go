@@ -4,6 +4,7 @@ package client
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/quarksgroup/payment-client/airtel"
 )
@@ -25,6 +26,13 @@ func (c *Client) Balance(ctx context.Context) (*airtel.Balance, *airtel.Response
 	out := new(balanceResponse)
 
 	res, err := c.do(ctx, "GET", endpoint, nil, out, header)
+
+	if !out.Status.Success {
+
+		code, _ := strconv.ParseInt(out.Status.Code, 10, 64)
+
+		return nil, nil, &airtel.Error{Code: int(code), Message: out.Status.Message}
+	}
 
 	return convertBalance(out), res, err
 

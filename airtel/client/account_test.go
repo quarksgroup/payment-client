@@ -15,12 +15,16 @@ import (
 
 func TestBalance(t *testing.T) {
 	defer gock.Off()
+	gock.Observe(gock.DumpRequest)
 
 	gock.New(baseUrl).
 		Get("/standard/v1/users/balance").
 		Reply(200).
 		Type("application/json").
 		File("testdata/account.json")
+
+	AuthClientMock()
+
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))

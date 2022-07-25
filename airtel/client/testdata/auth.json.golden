@@ -1,5 +1,5 @@
 {
     "token_type": "bearer",
-    "access_token": "hntg00kF8WnArnobVUl6KG1xlRssUl2k",
-    "expires_in": "2022-07-04 11:51:48.59491863 +0200 CAT"
+    "token": "hntg00kF8WnArnobVUl6KG1xlRssUl2k",
+    "expires": 180
 }

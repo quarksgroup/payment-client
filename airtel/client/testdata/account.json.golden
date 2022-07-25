@@ -1,7 +1,5 @@
 {
-    {
-        "balance": "0.00",
-        "currency": "RWF",
-        "account_status": "Active"
-    }
+    "amount": "100",
+    "currency": "RWF",
+    "status": "Active"
 }

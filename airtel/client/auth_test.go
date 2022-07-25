@@ -15,12 +15,20 @@ import (
 
 func TestLogin(t *testing.T) {
 	defer gock.Off()
+	gock.Observe(gock.DumpRequest)
 
 	gock.New(baseUrl).
 		Post("/auth/oauth2/token").
 		Reply(200).
 		Type("application/json").
 		File("testdata/auth.json")
+
+	gock.New(baseUrl).
+		Post("/auth/oauth2/token").
+		Reply(200).
+		Type("application/json").
+		File("testdata/auth.json")
+
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
