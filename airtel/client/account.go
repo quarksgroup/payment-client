@@ -3,6 +3,7 @@ package client
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/quarksgroup/payment-client/airtel"
 )
@@ -14,9 +15,17 @@ func (c *Client) Balance(ctx context.Context) (*airtel.Balance, *airtel.Response
 		return nil, nil, err
 	}
 
+	header := http.Header{
+		"X-country":  []string{c.Client.Country},
+		"X-Currency": []string{c.Client.Currency},
+	}
+
 	endpoint := "standard/v1/users/balance"
+
 	out := new(balanceResponse)
-	res, err := c.do(ctx, "GET", endpoint, nil, out, nil)
+
+	res, err := c.do(ctx, "GET", endpoint, nil, out, header)
+
 	return convertBalance(out), res, err
 
 }
