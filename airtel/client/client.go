@@ -19,7 +19,7 @@ const (
 	baseUrl   = "https://openapi.airtel.africa"
 	currency  = "RWF"
 	country   = "RW"
-	userAgent = "paypack"
+	userAgent = "paypack / 2"
 	retry     = 3
 )
 
@@ -66,7 +66,7 @@ func New(uri, pin, clientId, clientSceret, grant, currency, country string, retr
 	if err != nil {
 		return nil, err
 	}
-	client.Token = token
+	client.Client.Token = token
 
 	return client, nil
 }
@@ -99,13 +99,11 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 
 	// set the request headers
 	if headers != nil {
-		for k, v := range headers {
-			req.Header[k] = v
-		}
+		req.Header = headers
 	}
 
 	if c.UserAgent != "" {
-		req.Header.Set("User-Agent", c.UserAgent)
+		req.Header.Add("User-Agent", c.UserAgent)
 	}
 
 	// execute the http request using airtel.Client.Do()

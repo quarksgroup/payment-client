@@ -65,8 +65,11 @@ func (c *Client) Do(ctx context.Context, in *Request) (*Response, error) {
 		return nil, err
 	}
 
+	var req *http.Request
+
 	// creates a new http request with context.
-	req, err := http.NewRequest(in.Method, uri.String(), in.Body)
+	req, err = http.NewRequest(in.Method, uri.String(), in.Body)
+
 	if err != nil {
 		return nil, err
 	}

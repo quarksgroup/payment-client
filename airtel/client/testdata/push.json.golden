@@ -2,5 +2,5 @@
   "ref": "QUARKS350273CSD55X",
   "status": true,
   "message": "Success.",
-  "result_code": "ESB000010"
+  "response_code": "DP00800001006"
 }

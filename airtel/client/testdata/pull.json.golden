@@ -2,5 +2,5 @@
   "ref": "1234567890123",
   "status": true,
   "message": "*151*Txn ID CI220630.1512.B00012*S Ubu kuri konti yawe ufite RWF 6534.75. Ubikije neza RWF 100.00 kuri 722123205 Placide Ngarambe. Commission 0.00. KR#",
-  "result_code": "ESB000010"
+  "response_code": "DP00900001001"
 }

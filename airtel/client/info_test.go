@@ -17,6 +17,7 @@ var num = "72xxxxx"
 
 func TestCheck(t *testing.T) {
 	defer gock.Off()
+	gock.Observe(gock.DumpRequest)
 
 	gock.New(baseUrl).
 		Get("/standard/v1/users/").
