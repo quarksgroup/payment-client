@@ -7,29 +7,48 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/rehttp"
 	"github.com/quarksgroup/payment-client/airtel"
+	"github.com/quarksgroup/payment-client/client"
+	"github.com/quarksgroup/payment-client/token"
 )
 
 //This is const value for default configuration of airtel client
 const (
-	baseUrl   = "https://openapi.airtel.africa"
-	currency  = "RWF"
-	country   = "RW"
-	userAgent = "paypack / 2"
-	retry     = 3
+	baseUrl        = "https://openapi.airtel.africa"
+	currency       = "RWF"
+	country        = "RW"
+	userAgent      = "paypack"
+	defaultRetries = 3
 )
+
+type Config struct {
+	ClientId string
+	Secret   string
+	Grant    string
+	Pin      string
+	Currency string
+	Country  string
+}
 
 //This Client all client implentation of airtel.CLient
 type Client struct {
-	*airtel.Client
+	inner        *client.Client
+	TokenSource  token.TokenSource
+	BaseURL      *url.URL
+	Country      string
+	Currency     string
+	EncryptedPin string
+	ClientId     string
+	ClientSceret string
+	GrantType    string
 }
 
 // New creates a new airtel.Client instance backed by the http.Client
-func New(uri, pin, clientId, clientSceret, grant, currency, country string, retry int) (*Client, error) {
+func New(cfg *Config, source token.TokenSource, uri string, debug bool, retries int) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -38,37 +57,43 @@ func New(uri, pin, clientId, clientSceret, grant, currency, country string, retr
 		base.Path = base.Path + "/"
 	}
 
-	transport := &airtel.RetryTransport{
-		Next:       http.DefaultTransport,
-		MaxRetries: retry,
-		Logger:     os.Stdout,
-		Delay:      time.Duration(1 * time.Second),
-		Source:     ContextTokenSource(),
-	}
+	retryTransport := rehttp.NewTransport(
+		http.DefaultTransport,
+		rehttp.RetryAll(
+			rehttp.RetryMaxRetries(3),
+			rehttp.RetryAny(
+				rehttp.RetryTemporaryErr(),
+				rehttp.RetryStatuses(502, 503),
+			),
+		),
+		rehttp.ExpJitterDelay(100*time.Millisecond, 1*time.Second),
+	)
 
 	httpClient := &http.Client{
-		Transport: transport,
+		Transport: retryTransport,
 	}
 
-	client := &Client{new(airtel.Client)}
-	client.Client.Client = httpClient
+	inner := &client.Client{
+		Client:    httpClient,
+		BaseURL:   base,
+		UserAgent: userAgent,
+	}
+
+	client := new(Client)
+	client.inner = inner
+
 	client.BaseURL = base
-	client.Country = country
-	client.UserAgent = userAgent
-	client.Currency = currency
-	client.EncryptedPin = pin
-	client.ClientId = &clientId
-	client.ClientSceret = &clientSceret
-	client.GrantType = &grant
+	client.Country = cfg.Country
+	client.Currency = cfg.Currency
+	client.EncryptedPin = cfg.Pin
+	client.ClientId = cfg.ClientId
+	client.ClientSceret = cfg.Secret
+	client.GrantType = cfg.Grant
+	client.TokenSource = source
 
-	token, _, err := client.login(context.Background(), clientId, clientSceret, grant)
-
-	if err != nil {
-		return nil, err
+	if client.TokenSource == nil {
+		client.TokenSource = newTokenSource(client, cfg)
 	}
-	client.Client.Token = token
-	transport.Token = token
-
 	return client, nil
 }
 
@@ -76,15 +101,24 @@ func New(uri, pin, clientId, clientSceret, grant, currency, country string, retr
 // But it take payment credential parameter
 // default "https://openapi.airtel.africa" address, country RW(Rwanda) and RWF(Rwandan franc).
 func NewDefault(pin, clientId, secret, grant string) (*Client, error) {
-	return New(baseUrl, pin, clientId, secret, grant, currency, country, retry)
+	config := &Config{
+		Pin:      pin,
+		ClientId: clientId,
+		Secret:   secret,
+		Grant:    grant,
+		Currency: currency,
+		Country:  country,
+	}
+	return New(config, nil, baseUrl, false, defaultRetries)
 }
 
 // do wraps the Client.Do function by creating the Request and
 // unmarshalling the response according to user expected output.
-func (c *Client) do(ctx context.Context, method, path string, in, out interface{}, headers http.Header) (*airtel.Response, error) {
-	req := &airtel.Request{
+func (c *Client) do(ctx context.Context, method, path string, in, out interface{}, headers http.Header) (*client.Response, error) {
+	req := &client.Request{
 		Method: method,
 		Path:   path,
+		Header: make(http.Header),
 	}
 
 	// if we are posting or putting data, we need to
@@ -99,16 +133,26 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	}
 
 	// set the request headers
+
 	if headers != nil {
-		req.Header = headers
+		for k, v := range headers {
+			req.Header.Set(k, v[0])
+		}
 	}
 
-	if c.UserAgent != "" {
-		req.Header.Add("User-Agent", c.UserAgent)
+	if c.inner.UserAgent != "" {
+		req.Header.Set("User-Agent", c.inner.UserAgent)
 	}
+
+	// set auth token from TokenSource
+	token, err := c.TokenSource.Token(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+token.Token)
 
 	// execute the http request using airtel.Client.Do()
-	res, err := c.Client.Do(ctx, req)
+	res, err := c.inner.Do(ctx, req)
 
 	if err != nil {
 		return nil, err

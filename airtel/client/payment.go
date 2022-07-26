@@ -7,20 +7,16 @@ import (
 	"net/http"
 
 	"github.com/quarksgroup/payment-client/airtel"
+	"github.com/quarksgroup/payment-client/client"
 )
 
-//Pull this is responsible for the implementation of cash collection to your airtel portal from phone wallet
-func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
-
-	if err := c.renewToken(ctx); err != nil {
-		return nil, nil, err
-	}
-
+//Push this is responsible for the implementation of cash collection to your airtel portal from phone wallet
+func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *client.Response, error) {
 	endpoint := "merchant/v1/payments/"
 
 	sub := &subscriber{
-		Country:  c.Client.Country,
-		Currency: c.Client.Currency,
+		Country:  c.Country,
+		Currency: c.Currency,
 		Msisdn:   req.Phone,
 	}
 
@@ -36,8 +32,8 @@ func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status,
 	}
 
 	header := http.Header{
-		"X-country":  []string{c.Client.Country},
-		"X-Currency": []string{c.Client.Currency},
+		"X-country":  []string{c.Country},
+		"X-Currency": []string{c.Currency},
 	}
 
 	out := new(pullResponse)
@@ -55,13 +51,8 @@ func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status,
 	return convertPull(out), res, err
 }
 
-// Push this is responsible for cash distribution or disbursements from your phone wallet to your airtel portal
-func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status, *airtel.Response, error) {
-
-	if err := c.renewToken(ctx); err != nil {
-		return nil, nil, err
-	}
-
+// Pull this is responsible for cash distribution or disbursements from your phone wallet to your airtel portal
+func (c *Client) Pull(ctx context.Context, req *airtel.Payment) (*airtel.Status, *client.Response, error) {
 	endpoint := "standard/v1/disbursements/"
 
 	tx := &tx{
@@ -70,14 +61,14 @@ func (c *Client) Push(ctx context.Context, req *airtel.Payment) (*airtel.Status,
 	}
 	in := &pushRequest{
 		Reference:   req.Ref,
-		Pin:         c.Client.EncryptedPin,
+		Pin:         c.EncryptedPin,
 		Transaction: tx,
 	}
 	in.Payee.Msisdn = req.Phone
 
 	header := http.Header{
-		"X-country":  []string{c.Client.Country},
-		"X-Currency": []string{c.Client.Currency},
+		"X-country":  []string{c.Country},
+		"X-Currency": []string{c.Currency},
 	}
 
 	out := new(pushResponse)

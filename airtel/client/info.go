@@ -7,25 +7,22 @@ import (
 	"net/http"
 
 	"github.com/quarksgroup/payment-client/airtel"
+	"github.com/quarksgroup/payment-client/client"
 )
 
 //NumberInfo this is responsible for quering phone number information if is registered
-func (c *Client) NumberInfo(ctx context.Context, phone string) (*airtel.Number, *airtel.Response, error) {
-
-	if err := c.renewToken(ctx); err != nil {
-		return nil, nil, err
-	}
+func (c *Client) NumberInfo(ctx context.Context, phone string) (*airtel.Number, *client.Response, error) {
 
 	endpoint := fmt.Sprintf("standard/v1/users/%s", phone)
 
-	header := http.Header{
-		"X-country":  []string{c.Client.Country},
-		"X-Currency": []string{c.Client.Currency},
+	headers := http.Header{
+		"X-country":  []string{c.Country},
+		"X-Currency": []string{c.Currency},
 	}
 
 	out := new(checkResponse)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, header)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, headers)
 
 	if !out.Status.Success {
 		return nil, nil, &airtel.Error{Code: http.StatusBadRequest, Message: out.Status.Message}
@@ -36,22 +33,17 @@ func (c *Client) NumberInfo(ctx context.Context, phone string) (*airtel.Number, 
 
 //PullInfo responsible for quering the transaction information for the transaction made using
 //collection api of airtel payment
-func (c *Client) PullInfo(ctx context.Context, ref string) (*airtel.TxInfo, *airtel.Response, error) {
-
-	if err := c.renewToken(ctx); err != nil {
-		return nil, nil, err
-	}
-
+func (c *Client) PullInfo(ctx context.Context, ref string) (*airtel.TxInfo, *client.Response, error) {
 	endpoint := fmt.Sprintf("standard/v1/payments/%s", ref)
 
-	header := http.Header{
-		"X-country":  []string{c.Client.Country},
-		"X-Currency": []string{c.Client.Currency},
+	headers := http.Header{
+		"X-country":  []string{c.Country},
+		"X-Currency": []string{c.Currency},
 	}
 
 	out := new(txInfo)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, header)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, headers)
 
 	if !out.Status.Success {
 		return nil, nil, &airtel.Error{Code: http.StatusBadRequest, Message: out.Status.Message}
@@ -62,22 +54,17 @@ func (c *Client) PullInfo(ctx context.Context, ref string) (*airtel.TxInfo, *air
 
 //PushInfo responsible for quering the distrubuted information for the transaction made using
 //distribution or cashout api of airtel payment
-func (c *Client) PushInfo(ctx context.Context, ref string) (*airtel.TxInfo, *airtel.Response, error) {
-
-	if err := c.renewToken(ctx); err != nil {
-		return nil, nil, err
-	}
-
+func (c *Client) PushInfo(ctx context.Context, ref string) (*airtel.TxInfo, *client.Response, error) {
 	endpoint := fmt.Sprintf("standard/v1/disbursements/%s", ref)
 
-	header := http.Header{
-		"X-country":  []string{c.Client.Country},
-		"X-Currency": []string{c.Client.Currency},
+	headers := http.Header{
+		"X-country":  []string{c.Country},
+		"X-Currency": []string{c.Currency},
 	}
 
 	out := new(txInfo)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, header)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, headers)
 
 	if !out.Status.Success {
 		return nil, nil, &airtel.Error{Code: http.StatusBadRequest, Message: out.Status.Message}

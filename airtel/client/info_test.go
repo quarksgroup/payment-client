@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/quarksgroup/payment-client/airtel"
+	"github.com/quarksgroup/payment-client/mock"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -25,9 +26,17 @@ func TestCheck(t *testing.T) {
 		Type("application/json").
 		File("testdata/check_number.json")
 
-	authClientMock()
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+		Grant:    "client_credentials",
+		Pin:      "pin",
+		Currency: "RWF",
+		Country:  "RW",
+	}
+	tokenSource := mock.NewMockTokenSource()
 
-	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
+	client, err := New(cfg, tokenSource, baseUrl, true, defaultRetries)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

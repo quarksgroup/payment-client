@@ -20,14 +20,3 @@ type TokenKey struct{}
 type TokenSource interface {
 	Token(context.Context) (*Token, error)
 }
-
-// WithContext returns a copy of parent in which the token value is set
-func WithContext(parent context.Context, token *Token) context.Context {
-	return context.WithValue(parent, TokenKey{}, token)
-}
-
-// TokenFrom returns the login token from the context.
-func TokenFrom(ctx context.Context) *Token {
-	token, _ := ctx.Value(TokenKey{}).(*Token)
-	return token
-}
