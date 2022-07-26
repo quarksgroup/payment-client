@@ -1,4 +1,4 @@
-package client
+package airtel
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/payment-client/airtel"
 	"github.com/quarksgroup/payment-client/mock"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -19,7 +18,7 @@ func TestPush(t *testing.T) {
 	defer gock.Off()
 	gock.Observe(gock.DumpRequest)
 
-	in := &airtel.Payment{
+	in := &Payment{
 		ID:     "xxxx",
 		Amount: 100,
 		Ref:    "xxxx",
@@ -50,7 +49,7 @@ func TestPush(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(airtel.Status)
+	want := new(Status)
 	raw, _ := ioutil.ReadFile("testdata/push.json.golden")
 	_ = json.Unmarshal(raw, want)
 
@@ -67,7 +66,7 @@ func TestPull(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	in := &airtel.Payment{
+	in := &Payment{
 		ID:     "xxxx",
 		Amount: 100,
 		Ref:    "xxxx",
@@ -98,7 +97,7 @@ func TestPull(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(airtel.Status)
+	want := new(Status)
 
 	raw, _ := ioutil.ReadFile("testdata/pull.json.golden")
 

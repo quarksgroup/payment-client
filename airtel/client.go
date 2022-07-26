@@ -1,5 +1,4 @@
-// package client implements the payment.Client for the airtel(https://developers.airtel.africa/documentation)
-package client
+package airtel
 
 import (
 	"bytes"
@@ -11,7 +10,6 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/rehttp"
-	"github.com/quarksgroup/payment-client/airtel"
 	"github.com/quarksgroup/payment-client/client"
 	"github.com/quarksgroup/payment-client/token"
 )
@@ -165,11 +163,11 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	if res.Status > 299 && res.Status < 499 {
 		err := new(Err)
 		_ = json.NewDecoder(res.Body).Decode(err)
-		return res, &airtel.Error{Code: res.Status, Message: err.ErrorDescprition}
+		return res, &Error{Code: res.Status, Message: err.ErrorDescprition}
 	}
 
 	if res.Status > 499 {
-		return res, &airtel.Error{Code: res.Status, Message: "Something went wrong"}
+		return res, &Error{Code: res.Status, Message: "Something went wrong"}
 	}
 
 	if out == nil {
