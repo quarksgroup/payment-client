@@ -1,4 +1,4 @@
-package client
+package fdi
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/payment-client/fdi"
+	"github.com/quarksgroup/payment-client/mock"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -23,7 +23,15 @@ func TestInfo(t *testing.T) {
 		Reply(200).
 		Type("application/json").
 		File("testdata/info.json")
-	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
+
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+		CallBack: "https://test-callback.io",
+	}
+	tokenSource := mock.NewMockTokenSource()
+
+	client, err := New(baseUrl, cfg, tokenSource, retry)
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
@@ -31,7 +39,7 @@ func TestInfo(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(fdi.Info)
+	want := new(Info)
 	raw, _ := ioutil.ReadFile("testdata/info.json.golden")
 	_ = json.Unmarshal(raw, want)
 
