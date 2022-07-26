@@ -1,6 +1,4 @@
-//airtel this is where we define the client instance that hold airtel payment method for different
-//services of https://openapi.airtel.africa as airtel payment provider gateway
-package airtel
+package client
 
 import (
 	"context"
@@ -34,23 +32,8 @@ type Client struct {
 	// BaseURL should always be specified with a trailing slash.
 	BaseURL *url.URL
 
-	// EncryptedPin is the url to callback for payment reports
-	EncryptedPin string
-
-	//Country is the country name in abbreviation eg UG, KEN, RW etc.
-	Country string
-
 	// User agent used when communicating with the airtel API.
 	UserAgent string
-
-	//Currency is the currency eg RWF
-	Currency string
-
-	//Token is airtel auth token
-	Token *Token
-
-	//Client auth credential params
-	ClientId, ClientSceret, GrantType *string
 
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.

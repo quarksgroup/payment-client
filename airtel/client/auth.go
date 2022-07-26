@@ -2,12 +2,42 @@ package client
 
 import (
 	"context"
+	"time"
 
-	"github.com/quarksgroup/payment-client/airtel"
+	"github.com/quarksgroup/payment-client/token"
 )
 
+type tokenSource struct {
+	token     *token.Token
+	client    *Client
+	id        string
+	secret    string
+	grantType string
+}
+
+func newTokenSource(client *Client, cfg *Config) token.TokenSource {
+	return &tokenSource{
+		client:    client,
+		id:        cfg.ClientId,
+		secret:    cfg.Secret,
+		grantType: cfg.Grant,
+	}
+}
+
+func (tk *tokenSource) Token(ctx context.Context) (*token.Token, error) {
+	if tk.token != nil {
+		if tk.token.Expires.Before(time.Now().Local()) {
+			return tk.Login(ctx, tk.id, tk.secret, tk.grantType)
+		}
+		return tk.token, nil
+
+	}
+	return tk.Login(ctx, tk.id, tk.secret, tk.grantType)
+
+}
+
 //login responsible client api authentication to your airtel account portal but doesn't exposed outside
-func (c *Client) login(ctx context.Context, id, secret, grantType string) (*airtel.Token, *airtel.Response, error) {
+func (tk tokenSource) Login(ctx context.Context, id, secret, grantType string) (*token.Token, error) {
 	endpoint := "auth/oauth2/token"
 	in := tokenRequest{
 		ClientId:     id,
@@ -15,8 +45,8 @@ func (c *Client) login(ctx context.Context, id, secret, grantType string) (*airt
 		GrantType:    grantType,
 	}
 	out := new(tokenResponse)
-	res, err := c.do(ctx, "POST", endpoint, in, out, nil)
-	return convertToken(out), res, err
+	_, err := tk.client.do(ctx, "POST", endpoint, in, out, nil)
+	return convertToken(out), err
 }
 
 type tokenRequest struct {
@@ -31,13 +61,13 @@ type tokenResponse struct {
 	Expires     int64  `json:"expires_in"`
 }
 
-func convertToken(tk *tokenResponse) *airtel.Token {
+func convertToken(tk *tokenResponse) *token.Token {
 
-	// expires := time.Now().Local().Add(180 * time.Second)
+	expires := time.Now().Local().Add(180 * time.Second)
 
-	return &airtel.Token{
+	return &token.Token{
 		Token:   tk.AccessToken,
 		Type:    tk.TokenType,
-		Expires: tk.Expires,
+		Expires: expires,
 	}
 }

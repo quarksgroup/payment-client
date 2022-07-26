@@ -3,29 +3,19 @@ package client
 
 import (
 	"context"
-	"net/http"
 	"strconv"
 
 	"github.com/quarksgroup/payment-client/airtel"
+	"github.com/quarksgroup/payment-client/client"
 )
 
 //Balance responsible for returning the airtel account balance
-func (c *Client) Balance(ctx context.Context) (*airtel.Balance, *airtel.Response, error) {
-
-	if err := c.renewToken(ctx); err != nil {
-		return nil, nil, err
-	}
-
-	header := http.Header{
-		"X-country":  []string{c.Client.Country},
-		"X-Currency": []string{c.Client.Currency},
-	}
-
+func (c *Client) Balance(ctx context.Context) (*airtel.Balance, *client.Response, error) {
 	endpoint := "standard/v1/users/balance"
 
 	out := new(balanceResponse)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, header)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, nil)
 
 	if !out.Status.Success {
 
