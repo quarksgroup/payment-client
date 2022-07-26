@@ -23,7 +23,7 @@ func TestBalance(t *testing.T) {
 		Type("application/json").
 		File("testdata/account.json")
 
-	AuthClientMock()
+	authClientMock()
 
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 

@@ -26,11 +26,10 @@ type RetryTransport struct {
 	Delay      time.Duration // delay between each retry
 	Source     TokenSource
 	Scheme     string
+	Token      *Token
 }
 
 func (t RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-
-	fmt.Fprintf(t.Logger, "[%s] Takes %s time %s %s\n", time.Now().Format(time.ANSIC), duration(time.Since(time.Now()), 2), req.Method, req.URL.String())
 
 	ctx := req.Context()
 
@@ -48,40 +47,44 @@ func (t RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	for {
 
-		req.Header.Set("Authorization", t.scheme()+" "+token.Token)
+		if t.Token != nil {
 
-		res, err := t.Next.RoundTrip(req)
+			req.Header.Set("Authorization", t.scheme()+" "+t.Token.Token)
 
-		attempt++
+			res, err := t.Next.RoundTrip(req)
 
-		// max retries exceeded
-		if attempt == t.MaxRetries {
-			return res, err
-		}
+			attempt++
 
-		if err == nil && res.StatusCode == http.StatusOK {
-			return res, err
-		}
+			// max retries exceeded
+			if attempt == t.MaxRetries {
+				return res, err
+			}
 
-		//Check if request response is not authorized.
-		if err == nil && res.StatusCode == http.StatusUnauthorized {
-			//Here this is where we referesh our token to renew it the implementation will go/called here
-			res, err = t.Next.RoundTrip(req)
-		}
+			if err == nil && res.StatusCode == http.StatusOK {
+				return res, err
+			}
 
-		if err == nil && res.StatusCode == http.StatusInternalServerError {
-			return res, err
-		}
+			//Check if request response is not authorized.
+			if err == nil && res.StatusCode == http.StatusUnauthorized {
+				//Here this is where we referesh our token to renew it the implementation will go/called here
+				fmt.Fprintf(t.Logger, "The response status %d\n", res.StatusCode)
+				res, err = t.Next.RoundTrip(req)
+			}
 
-		if res.StatusCode >= 299 && res.StatusCode <= 400 {
-			return res, err
-		}
+			if err == nil && res.StatusCode == http.StatusInternalServerError {
+				return res, err
+			}
 
-		// delay and retry
-		select {
-		case <-ctx.Done():
-			return res, ctx.Err()
-		case <-time.After(t.Delay):
+			if res.StatusCode >= 299 && res.StatusCode <= 400 {
+				return res, err
+			}
+
+			// delay and retry
+			select {
+			case <-ctx.Done():
+				return res, ctx.Err()
+			case <-time.After(t.Delay):
+			}
 		}
 	}
 }

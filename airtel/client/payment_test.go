@@ -24,13 +24,13 @@ func TestPush(t *testing.T) {
 		Phone:  num,
 	}
 
+	authClientMock()
+
 	gock.New(baseUrl).
 		Post("/standard/v1/disbursements/").
 		Reply(200).
 		Type("application/json").
 		File("testdata/push.json")
-
-	AuthClientMock()
 
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 
@@ -52,6 +52,7 @@ func TestPush(t *testing.T) {
 
 func TestPull(t *testing.T) {
 	defer gock.Off()
+	gock.Observe(gock.DumpRequest)
 
 	in := &airtel.Payment{
 		ID:     "xxxx",
@@ -60,13 +61,13 @@ func TestPull(t *testing.T) {
 		Phone:  num,
 	}
 
+	authClientMock()
+
 	gock.New(baseUrl).
 		Post("/merchant/v1/payments/").
 		Reply(200).
 		Type("application/json").
 		File("testdata/pull.json")
-
-	AuthClientMock()
 
 	client, err := NewDefault("encrypted-pin", "client_id", "sceret", "grant_type")
 

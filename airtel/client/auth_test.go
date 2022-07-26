@@ -47,7 +47,7 @@ func TestLogin(t *testing.T) {
 	}
 }
 
-func AuthClientMock() {
+func authClientMock() {
 	gock.New(baseUrl).
 		Post("/auth/oauth2/token").
 		Reply(200).

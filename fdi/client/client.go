@@ -63,6 +63,7 @@ func New(uri, client_id, sceret, callback string, retry int) (*Client, error) {
 	}
 
 	client.Client.Token = tk
+	transport.Token = tk
 
 	return client, nil
 }
