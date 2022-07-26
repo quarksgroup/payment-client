@@ -58,7 +58,7 @@ func New(cfg *Config, source token.TokenSource, uri string, debug bool, retries 
 	retryTransport := rehttp.NewTransport(
 		http.DefaultTransport,
 		rehttp.RetryAll(
-			rehttp.RetryMaxRetries(3),
+			rehttp.RetryMaxRetries(retries),
 			rehttp.RetryAny(
 				rehttp.RetryTemporaryErr(),
 				rehttp.RetryStatuses(502, 503),
@@ -160,14 +160,23 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 
 	// if an error is encountered, unmarshal and return the
 	// error response.
-	if res.Status > 299 && res.Status < 499 {
-		err := new(Err)
-		_ = json.NewDecoder(res.Body).Decode(err)
-		return res, &Error{Code: res.Status, Message: err.ErrorDescprition}
-	}
+	switch res.Status {
+	case http.StatusUnauthorized:
+		_, err = c.TokenSource.Token(ctx)
+		if err != nil {
+			return nil, err
+		}
+		c.do(ctx, method, path, in, out, headers)
+	default:
+		if res.Status > 299 && res.Status < 499 {
+			err := new(Err)
+			_ = json.NewDecoder(res.Body).Decode(err)
+			return res, &Error{Code: res.Status, Message: err.ErrorDescprition}
+		}
 
-	if res.Status > 499 {
-		return res, &Error{Code: res.Status, Message: "Something went wrong"}
+		if res.Status > 499 {
+			return res, &Error{Code: res.Status, Message: "Something went wrong"}
+		}
 	}
 
 	if out == nil {

@@ -26,7 +26,7 @@ func TestPush(t *testing.T) {
 	}
 
 	gock.New(baseUrl).
-		Post("/standard/v1/disbursements/").
+		Post("/merchant/v1/payments/").
 		Reply(200).
 		Type("application/json").
 		File("testdata/push.json")
@@ -74,7 +74,7 @@ func TestPull(t *testing.T) {
 	}
 
 	gock.New(baseUrl).
-		Post("/merchant/v1/payments/").
+		Post("/standard/v1/disbursements/").
 		Reply(200).
 		Type("application/json").
 		File("testdata/pull.json")

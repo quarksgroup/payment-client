@@ -63,7 +63,7 @@ type tokenResponse struct {
 
 func convertToken(tk *tokenResponse) *token.Token {
 
-	expires := time.Now().Local().Add(180 * time.Second)
+	expires := time.Now().Local().Add(time.Duration(tk.Expires) * time.Second)
 
 	return &token.Token{
 		Token:   tk.AccessToken,
