@@ -67,6 +67,7 @@ func New(uri, pin, clientId, clientSceret, grant, currency, country string, retr
 		return nil, err
 	}
 	client.Client.Token = token
+	transport.Token = token
 
 	return client, nil
 }
