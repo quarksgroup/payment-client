@@ -1,4 +1,4 @@
-package client
+package airtel
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/payment-client/airtel"
 	"github.com/quarksgroup/payment-client/mock"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
@@ -42,7 +41,7 @@ func TestBalance(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(airtel.Balance)
+	want := new(Balance)
 	raw, _ := ioutil.ReadFile("testdata/account.json.golden")
 	_ = json.Unmarshal(raw, want)
 
