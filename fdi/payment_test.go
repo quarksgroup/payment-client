@@ -1,4 +1,4 @@
-package client
+package fdi
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/nbio/st"
-	"github.com/quarksgroup/payment-client/fdi"
+	"github.com/quarksgroup/payment-client/mock"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -20,7 +20,7 @@ func TestPull(t *testing.T) {
 	//For debugging proposer mode
 	gock.Observe(gock.DumpRequest)
 
-	py := &fdi.Payment{
+	py := &Payment{
 		ID:       "xxxx",
 		Amount:   1000,
 		Wallet:   "xxxx",
@@ -33,9 +33,14 @@ func TestPull(t *testing.T) {
 		Type("application/json").
 		File("testdata/status.json")
 
-	AuthClientMock()
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+		CallBack: "https://test-callback.io",
+	}
+	tokenSource := mock.NewMockTokenSource()
 
-	client, err := NewDefault("https://test-callback.io", "client_id", "client_sceret")
+	client, err := New(baseUrl, cfg, tokenSource, retry)
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
@@ -43,7 +48,7 @@ func TestPull(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(fdi.Status)
+	want := new(Status)
 	raw, _ := ioutil.ReadFile("testdata/status.json.golden")
 	_ = json.Unmarshal(raw, want)
 
@@ -62,7 +67,7 @@ func TestPush(t *testing.T) {
 	//For debugging proposer mode
 	gock.Observe(gock.DumpRequest)
 
-	py := &fdi.Payment{
+	py := &Payment{
 		ID:       "xxxx",
 		Amount:   1000,
 		Wallet:   "xxxx",
@@ -75,9 +80,14 @@ func TestPush(t *testing.T) {
 		Type("application/json").
 		File("testdata/status.json")
 
-	AuthClientMock()
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+		CallBack: "https://test-callback.io",
+	}
+	tokenSource := mock.NewMockTokenSource()
 
-	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
+	client, err := New(baseUrl, cfg, tokenSource, retry)
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
@@ -85,7 +95,7 @@ func TestPush(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(fdi.Status)
+	want := new(Status)
 	raw, _ := ioutil.ReadFile("testdata/status.json.golden")
 	_ = json.Unmarshal(raw, want)
 

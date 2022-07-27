@@ -1,4 +1,4 @@
-package client
+package fdi
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/payment-client/fdi"
+	"github.com/quarksgroup/payment-client/mock"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -25,9 +25,14 @@ func TestBalance(t *testing.T) {
 		Type("application/json").
 		File("testdata/balance.json")
 
-	AuthClientMock()
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+		CallBack: "https://test-callback.io",
+	}
+	tokenSource := mock.NewMockTokenSource()
 
-	client, err := NewDefault("https://test-callback.io", "client_id", "screte")
+	client, err := New(baseUrl, cfg, tokenSource, retry)
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
@@ -35,7 +40,7 @@ func TestBalance(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	want := new(fdi.Balance)
+	want := new(Balance)
 	raw, _ := ioutil.ReadFile("testdata/balance.json.golden")
 	_ = json.Unmarshal(raw, want)
 
