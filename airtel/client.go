@@ -166,7 +166,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 		if err != nil {
 			return nil, err
 		}
-		c.do(ctx, method, path, in, out, headers)
+		return c.do(ctx, method, path, in, out, headers)
 	default:
 		if res.Status > 299 && res.Status < 499 {
 			err := new(Err)
