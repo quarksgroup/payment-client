@@ -109,7 +109,7 @@ func NewDefault(callback, client_id, sceret string) (*Client, error) {
 
 // do wraps the Client.Do function by creating the Request and
 // unmarshalling the response according to user wish expected output.
-func (c *Client) do(ctx context.Context, method, path string, in, out interface{}) (*client.Response, error) {
+func (c *Client) do(ctx context.Context, method, path string, in, out interface{}, addToken bool) (*client.Response, error) {
 	req := &client.Request{
 		Method: method,
 		Path:   path,
@@ -132,7 +132,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	}
 
 	// set auth token from TokenSource
-	if c.TokenSource != nil {
+	if c.TokenSource != nil && addToken {
 		token, err := c.TokenSource.Token(ctx)
 		if err != nil {
 			return nil, err
@@ -155,7 +155,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 		if err != nil {
 			return nil, err
 		}
-		return c.do(ctx, method, path, in, out)
+		return c.do(ctx, method, path, in, out, addToken)
 	default:
 		if res.Status > 299 && res.Status < 499 {
 			err := new(Err)

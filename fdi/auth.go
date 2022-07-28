@@ -51,7 +51,7 @@ func (tk *tokenSource) Login(ctx context.Context, id, secret string) (*token.Tok
 		Secret: secret,
 	}
 	out := new(tokenResponse)
-	_, err := tk.client.do(ctx, "POST", endpoint, in, out)
+	_, err := tk.client.do(ctx, "POST", endpoint, in, out, false)
 	return convertToken(out), err
 }
 

@@ -22,7 +22,7 @@ func (c *Client) TransactionInfo(ctx context.Context, ref string) (*Info, *clien
 
 	endpoint := fmt.Sprintf("momo/trx/%s/info", ref)
 	out := new(infoResponse)
-	res, err := c.do(ctx, "GET", endpoint, nil, out)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, true)
 	return convertInfo(out), res, err
 }
 

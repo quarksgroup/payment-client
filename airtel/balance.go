@@ -20,7 +20,7 @@ func (c *Client) Balance(ctx context.Context) (*Balance, *client.Response, error
 
 	out := new(balanceResponse)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, nil)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, nil, true)
 
 	// this is supposed to be taken care of from inside client.do
 	if !out.Status.Success {

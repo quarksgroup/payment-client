@@ -60,7 +60,7 @@ func (tk tokenSource) Login(ctx context.Context, id, secret, grantType string) (
 		GrantType:    grantType,
 	}
 	out := new(tokenResponse)
-	_, err := tk.client.do(ctx, "POST", endpoint, in, out, nil)
+	_, err := tk.client.do(ctx, "POST", endpoint, in, out, nil, false)
 	return convertToken(out), err
 }
 
