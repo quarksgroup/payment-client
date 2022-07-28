@@ -14,12 +14,18 @@ type tokenSource struct {
 	secret string
 }
 
-func newTokenSource(client *Client, cfg *Config) token.TokenSource {
-	return &tokenSource{
+func newTokenSource(client *Client, cfg *Config) (token.TokenSource, error) {
+	tks := &tokenSource{
 		client: client,
 		id:     cfg.ClientId,
 		secret: cfg.Secret,
 	}
+	token, err := tks.Login(context.Background(), cfg.ClientId, cfg.Secret)
+	if err != nil {
+		return nil, err
+	}
+	tks.token = token
+	return tks, nil
 }
 
 func (tk *tokenSource) Token(ctx context.Context) (*token.Token, error) {
