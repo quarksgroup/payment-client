@@ -41,7 +41,7 @@ func (c *Client) Pull(ctx context.Context, py *Payment) (*Status, *client.Respon
 		Callback: c.ReportURL.String(),
 	}
 	out := new(paymentResponse)
-	res, err := c.do(ctx, "POST", endpoint, in, out)
+	res, err := c.do(ctx, "POST", endpoint, in, out, true)
 	return convertResponse(out), res, err
 }
 
@@ -56,7 +56,7 @@ func (c *Client) Push(ctx context.Context, py *Payment) (*Status, *client.Respon
 		Callback: c.ReportURL.String(),
 	}
 	out := new(paymentResponse)
-	res, err := c.do(ctx, "POST", endpoint, in, out)
+	res, err := c.do(ctx, "POST", endpoint, in, out, true)
 	return convertResponse(out), res, err
 }
 

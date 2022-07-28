@@ -31,7 +31,7 @@ func (c *Client) Balance(ctx context.Context) (*Balance, *client.Response, error
 
 	endpoint := "balance/now"
 	out := new(balanceResponse)
-	res, err := c.do(ctx, "GET", endpoint, nil, out)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, true)
 	return convertBalance(out), res, err
 
 }

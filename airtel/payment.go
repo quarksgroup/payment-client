@@ -51,7 +51,7 @@ func (c *Client) Push(ctx context.Context, req *Payment) (*Status, *client.Respo
 
 	out := new(pullResponse)
 
-	res, err := c.do(ctx, "POST", endpoint, in, out, header)
+	res, err := c.do(ctx, "POST", endpoint, in, out, header, true)
 
 	if err != nil {
 		return nil, nil, err
@@ -86,7 +86,7 @@ func (c *Client) Pull(ctx context.Context, req *Payment) (*Status, *client.Respo
 
 	out := new(pushResponse)
 
-	res, err := c.do(ctx, "POST", endpoint, in, out, header)
+	res, err := c.do(ctx, "POST", endpoint, in, out, header, true)
 
 	if err != nil {
 		return nil, nil, err

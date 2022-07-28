@@ -69,7 +69,7 @@ func (c *Client) NumberInfo(ctx context.Context, phone string) (*Number, *client
 
 	out := new(checkResponse)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, headers)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, headers, true)
 
 	if !out.Status.Success {
 		return nil, nil, &Error{Code: http.StatusBadRequest, Message: out.Status.Message}
@@ -90,7 +90,7 @@ func (c *Client) PullInfo(ctx context.Context, ref string) (*TxInfo, *client.Res
 
 	out := new(txInfo)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, headers)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, headers, true)
 
 	if !out.Status.Success {
 		return nil, nil, &Error{Code: http.StatusBadRequest, Message: out.Status.Message}
@@ -111,7 +111,7 @@ func (c *Client) PushInfo(ctx context.Context, ref string) (*TxInfo, *client.Res
 
 	out := new(txInfo)
 
-	res, err := c.do(ctx, "GET", endpoint, nil, out, headers)
+	res, err := c.do(ctx, "GET", endpoint, nil, out, headers, true)
 
 	if !out.Status.Success {
 		return nil, nil, &Error{Code: http.StatusBadRequest, Message: out.Status.Message}

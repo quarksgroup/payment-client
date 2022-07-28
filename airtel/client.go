@@ -117,7 +117,7 @@ func NewDefault(pin, clientId, secret, grant string) (*Client, error) {
 
 // do wraps the Client.Do function by creating the Request and
 // unmarshalling the response according to user expected output.
-func (c *Client) do(ctx context.Context, method, path string, in, out interface{}, headers http.Header) (*client.Response, error) {
+func (c *Client) do(ctx context.Context, method, path string, in, out interface{}, headers http.Header, addToken bool) (*client.Response, error) {
 	req := &client.Request{
 		Method: method,
 		Path:   path,
@@ -148,13 +148,14 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	}
 
 	// set auth token from TokenSource
-	if c.TokenSource != nil {
+	if c.TokenSource != nil && addToken {
 		token, err := c.TokenSource.Token(ctx)
 		if err != nil {
 			return nil, err
 		}
 		req.Header.Set("Authorization", "Bearer "+token.Token)
 	}
+
 	// execute the http request using airtel.Client.Do()
 	res, err := c.inner.Do(ctx, req)
 
@@ -172,7 +173,7 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 		if err != nil {
 			return nil, err
 		}
-		return c.do(ctx, method, path, in, out, headers)
+		return c.do(ctx, method, path, in, out, headers, addToken)
 	default:
 		if res.Status > 299 && res.Status < 499 {
 			err := new(Err)
