@@ -15,13 +15,23 @@ type tokenSource struct {
 	grantType string
 }
 
-func newTokenSource(client *Client, cfg *Config) token.TokenSource {
-	return &tokenSource{
+func newTokenSource(client *Client, cfg *Config) (token.TokenSource, error) {
+	tks := &tokenSource{
 		client:    client,
 		id:        cfg.ClientId,
 		secret:    cfg.Secret,
 		grantType: cfg.Grant,
 	}
+
+	token, err := tks.Login(context.Background(), cfg.ClientId, cfg.Secret, cfg.Grant)
+
+	if err != nil {
+		return nil, err
+	}
+
+	tks.token = token
+
+	return tks, nil
 }
 
 func (tk *tokenSource) Token(ctx context.Context) (*token.Token, error) {

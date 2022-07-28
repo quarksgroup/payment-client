@@ -90,8 +90,13 @@ func New(cfg *Config, source token.TokenSource, uri string, debug bool, retries 
 	client.TokenSource = source
 
 	if client.TokenSource == nil {
-		client.TokenSource = newTokenSource(client, cfg)
+		client.TokenSource, err = newTokenSource(client, cfg)
+		if err != nil {
+			return nil, err
+		}
+
 	}
+
 	return client, nil
 }
 
