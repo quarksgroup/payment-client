@@ -148,12 +148,13 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	}
 
 	// set auth token from TokenSource
-	token, err := c.TokenSource.Token(ctx)
-	if err != nil {
-		return nil, err
+	if c.TokenSource != nil {
+		token, err := c.TokenSource.Token(ctx)
+		if err != nil {
+			return nil, err
+		}
+		req.Header.Set("Authorization", "Bearer "+token.Token)
 	}
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
 	// execute the http request using airtel.Client.Do()
 	res, err := c.inner.Do(ctx, req)
 
