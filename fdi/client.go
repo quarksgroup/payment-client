@@ -86,7 +86,11 @@ func New(uri string, cfg *Config, source token.TokenSource, retry int) (*Client,
 	client.TokenSource = source
 
 	if client.TokenSource == nil {
-		client.TokenSource = newTokenSource(client, cfg)
+		client.TokenSource, err = newTokenSource(client, cfg)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
 	return client, nil
@@ -128,13 +132,14 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	}
 
 	// set auth token from TokenSource
-	token, err := c.TokenSource.Token(ctx)
-	if err != nil {
-		return nil, err
+	if c.TokenSource != nil {
+		token, err := c.TokenSource.Token(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Authorization", "Bearer "+token.Token)
 	}
-
-	req.Header.Set("Authorization", "Bearer "+token.Token)
-
 	// execute the http request
 	res, err := c.inner.Do(ctx, req)
 	if err != nil {
