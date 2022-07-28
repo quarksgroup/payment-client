@@ -31,7 +31,11 @@ func newTokenSource(client *Client, cfg *Config) (token.TokenSource, error) {
 func (tk *tokenSource) Token(ctx context.Context) (*token.Token, error) {
 	if tk.token != nil {
 		if tk.token.Expires.Before(time.Now().Local()) {
-			return tk.Login(ctx, tk.id, tk.secret)
+			token, err := tk.Login(ctx, tk.id, tk.secret)
+			if err != nil {
+				return nil, err
+			}
+			tk.token = token
 		}
 		return tk.token, nil
 
