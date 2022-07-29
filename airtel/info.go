@@ -29,7 +29,7 @@ type Number struct {
 type TxInfo struct {
 	Ref    string
 	Status string
-	Type   Kind
+	Kind   Kind
 }
 
 //Abrivated transaction status
@@ -142,7 +142,7 @@ func convertTxInfo(res *txInfo, kind Kind) *TxInfo {
 	return &TxInfo{
 		Ref:    res.Data.Transaction.Id,
 		Status: ConvertStatus(res.Data.Transaction.Status),
-		Type:   kind,
+		Kind:   kind,
 	}
 }
 
