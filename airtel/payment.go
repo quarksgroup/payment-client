@@ -23,8 +23,8 @@ type Status struct {
 	ResponseCode string `json:"response_code"`
 }
 
-//Push this is responsible for the implementation of cash collection to your airtel portal from phone wallet
-func (c *Client) Push(ctx context.Context, req *Payment) (*Status, *client.Response, error) {
+//Pull this is responsible for the implementation of cash collection to your airtel portal from phone wallet
+func (c *Client) Pull(ctx context.Context, req *Payment) (*Status, *client.Response, error) {
 	endpoint := "merchant/v1/payments/"
 
 	sub := &subscriber{
@@ -64,8 +64,8 @@ func (c *Client) Push(ctx context.Context, req *Payment) (*Status, *client.Respo
 	return convertPull(out), res, err
 }
 
-// Pull this is responsible for cash distribution or disbursements from your phone wallet to your airtel portal
-func (c *Client) Pull(ctx context.Context, req *Payment) (*Status, *client.Response, error) {
+// Push this is responsible for cash distribution or disbursements from your phone wallet to your airtel portal
+func (c *Client) Push(ctx context.Context, req *Payment) (*Status, *client.Response, error) {
 	endpoint := "standard/v1/disbursements/"
 
 	tx := &tx{

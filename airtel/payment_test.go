@@ -45,7 +45,7 @@ func TestPush(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	got, _, err := client.Push(context.Background(), in)
+	got, _, err := client.Pull(context.Background(), in)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
@@ -93,7 +93,7 @@ func TestPull(t *testing.T) {
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	got, _, err := client.Pull(ctx, in)
+	got, _, err := client.Push(ctx, in)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
