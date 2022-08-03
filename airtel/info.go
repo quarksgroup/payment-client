@@ -32,30 +32,21 @@ type TxInfo struct {
 	Kind   Kind
 }
 
-//Abrivated transaction status
+//Abrivated transaction status on cashin or collective
 const (
-	ts  = "TS"  //Transaction Success
-	tf  = "TF"  //Transaction Failed
-	ta  = "TA"  //Transaction Ambiguous
-	tip = "TIP" //Transaction in Progress
+	pullTs  = "TS"  //Transaction Success
+	pullTf  = "TF"  //Transaction Failed
+	pullTa  = "TA"  //Transaction Ambiguous
+	pullTip = "TIP" //Transaction in Progress
 )
 
-//ConvertStatus convert transaction status to common status value
-func ConvertStatus(status string) string {
-
-	switch strings.ToUpper(status) {
-	case ts:
-		return "successful"
-	case tf:
-		return "failed"
-	case ta:
-		return "failed"
-	case tip:
-		return "pending"
-	default:
-		return "failed"
-	}
-}
+//Abrivated transaction status on cashout or distributive
+const (
+	pushTs  = "Transaction Success"     //TS
+	pushTf  = "Transaction Failed"      //TF
+	pushTa  = "Transaction Ambiguous"   //TA
+	pushTip = "Transaction in Progress" //TIP
+)
 
 //NumberInfo this is responsible for quering phone number information if is registered
 func (c *Client) NumberInfo(ctx context.Context, phone string) (*Number, *client.Response, error) {
@@ -141,7 +132,7 @@ type txInfo struct {
 func convertTxInfo(res *txInfo, kind Kind) *TxInfo {
 	return &TxInfo{
 		Ref:    res.Data.Transaction.Id,
-		Status: ConvertStatus(res.Data.Transaction.Status),
+		Status: ConvertStatus(res, kind),
 		Kind:   kind,
 	}
 }
@@ -175,5 +166,39 @@ func convertNumberInfo(res *checkResponse) *Number {
 		LastName:  res.Data.LastName,
 		Status:    res.Status.Success,
 		HasPin:    res.Data.IsPinSet,
+	}
+}
+
+//ConvertStatus convert transaction status to common status value
+func ConvertStatus(res *txInfo, kind Kind) string {
+	switch kind {
+	case Cashin:
+		switch strings.ToUpper(res.Data.Transaction.Status) {
+		case pullTs:
+			return "successful"
+		case pullTf:
+			return "failed"
+		case pullTa:
+			return "failed"
+		case pullTip:
+			return "pending"
+		default:
+			return "failed"
+		}
+	case Cashout:
+		switch res.Data.Transaction.Message {
+		case pushTs:
+			return "successful"
+		case pushTf:
+			return "failed"
+		case pushTa:
+			return "failed"
+		case pushTip:
+			return "pending"
+		default:
+			return "failed"
+		}
+	default:
+		return "pending"
 	}
 }
