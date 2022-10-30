@@ -33,7 +33,7 @@ func TestBalance(t *testing.T) {
 	}
 	tokenSource := mock.NewMockTokenSource()
 
-	client, err := New(cfg, tokenSource, baseUrl, true, defaultRetries)
+	client, err := New(cfg, tokenSource, baseUrl, true, defaultRetries, nil)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 

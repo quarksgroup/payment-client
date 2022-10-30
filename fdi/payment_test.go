@@ -40,7 +40,7 @@ func TestPull(t *testing.T) {
 	}
 	tokenSource := mock.NewMockTokenSource()
 
-	client, err := New(baseUrl, cfg, tokenSource, retry)
+	client, err := New(baseUrl, cfg, tokenSource, retry, nil)
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
@@ -87,7 +87,7 @@ func TestPush(t *testing.T) {
 	}
 	tokenSource := mock.NewMockTokenSource()
 
-	client, err := New(baseUrl, cfg, tokenSource, retry)
+	client, err := New(baseUrl, cfg, tokenSource, retry, nil)
 
 	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
