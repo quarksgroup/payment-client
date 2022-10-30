@@ -46,7 +46,7 @@ type Client struct {
 }
 
 // New creates a new airtel.Client instance backed by the http.Client
-func New(cfg *Config, source token.TokenSource, uri string, debug bool, retries int) (*Client, error) {
+func New(cfg *Config, source token.TokenSource, uri string, debug bool, retries int, trp http.RoundTripper) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -66,6 +66,10 @@ func New(cfg *Config, source token.TokenSource, uri string, debug bool, retries 
 		),
 		rehttp.ExpJitterDelay(100*time.Millisecond, 1*time.Second),
 	)
+
+	if trp != nil {
+		retryTransport.RoundTripper = trp
+	}
 
 	httpClient := &http.Client{
 		Transport: retryTransport,
@@ -112,7 +116,7 @@ func NewDefault(pin, clientId, secret, grant string) (*Client, error) {
 		Currency: currency,
 		Country:  country,
 	}
-	return New(config, nil, baseUrl, false, defaultRetries)
+	return New(config, nil, baseUrl, false, defaultRetries, nil)
 }
 
 // do wraps the Client.Do function by creating the Request and

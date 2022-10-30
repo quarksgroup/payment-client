@@ -43,7 +43,7 @@ type Client struct {
 }
 
 // New creates a new fdi.Client instance backed by the  http.Client instance
-func New(uri string, cfg *Config, source token.TokenSource, retry int) (*Client, error) {
+func New(uri string, cfg *Config, source token.TokenSource, retry int, trp http.RoundTripper) (*Client, error) {
 	base, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
@@ -66,6 +66,10 @@ func New(uri string, cfg *Config, source token.TokenSource, retry int) (*Client,
 		),
 		rehttp.ExpJitterDelay(100*time.Millisecond, 1*time.Second),
 	)
+
+	if trp != nil {
+		retryTransport.RoundTripper = trp
+	}
 
 	httpClient := &http.Client{
 		Transport: retryTransport,
@@ -104,7 +108,7 @@ func NewDefault(callback, client_id, sceret string) (*Client, error) {
 		Secret:   sceret,
 		CallBack: callback,
 	}
-	return New(baseUrl, config, nil, retry)
+	return New(baseUrl, config, nil, retry, nil)
 }
 
 // do wraps the Client.Do function by creating the Request and
