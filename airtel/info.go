@@ -25,30 +25,22 @@ type Number struct {
 	HasPin    bool   `json:"has_pin"`
 }
 
-//TxInfo respresent information about transaction
+// TxInfo respresent information about transaction
 type TxInfo struct {
 	Ref    string
 	Status string
 	Kind   Kind
 }
 
-//Abrivated transaction status on cashin or collective
+// Abrivated transaction status on cashin/collective and cashout/distributive
 const (
-	pullTs  = "TS"  //Transaction Success
-	pullTf  = "TF"  //Transaction Failed
-	pullTa  = "TA"  //Transaction Ambiguous
-	pullTip = "TIP" //Transaction in Progress
+	TxSuccess    = "TS"  //Transaction Success
+	TxFailed     = "TF"  //Transaction Failed
+	TxTerminated = "TA"  //Transaction Ambiguous
+	TxPending    = "TIP" //Transaction in Progress
 )
 
-//Abrivated transaction status on cashout or distributive
-const (
-	pushTs  = "Transaction Success"     //TS
-	pushTf  = "Transaction Failed"      //TF
-	pushTa  = "Transaction Ambiguous"   //TA
-	pushTip = "Transaction in Progress" //TIP
-)
-
-//NumberInfo this is responsible for quering phone number information if is registered
+// NumberInfo this is responsible for quering phone number information if is registered
 func (c *Client) NumberInfo(ctx context.Context, phone string) (*Number, *client.Response, error) {
 
 	endpoint := fmt.Sprintf("standard/v1/users/%s", phone)
@@ -69,8 +61,8 @@ func (c *Client) NumberInfo(ctx context.Context, phone string) (*Number, *client
 	return convertNumberInfo(out), res, err
 }
 
-//PullInfo responsible for quering the transaction information for the transaction made using
-//collection api of airtel payment
+// PullInfo responsible for quering the transaction information for the transaction made using
+// collection api of airtel payment
 func (c *Client) PullInfo(ctx context.Context, ref string) (*TxInfo, *client.Response, error) {
 	endpoint := fmt.Sprintf("standard/v1/payments/%s", ref)
 
@@ -90,8 +82,8 @@ func (c *Client) PullInfo(ctx context.Context, ref string) (*TxInfo, *client.Res
 	return convertTxInfo(out, Cashin), res, err
 }
 
-//PushInfo responsible for quering the distrubuted information for the transaction made using
-//distribution or cashout api of airtel payment
+// PushInfo responsible for quering the distrubuted information for the transaction made using
+// distribution or cashout api of airtel payment
 func (c *Client) PushInfo(ctx context.Context, ref string) (*TxInfo, *client.Response, error) {
 	endpoint := fmt.Sprintf("standard/v1/disbursements/%s", ref)
 
@@ -132,7 +124,7 @@ type txInfo struct {
 func convertTxInfo(res *txInfo, kind Kind) *TxInfo {
 	return &TxInfo{
 		Ref:    res.Data.Transaction.Id,
-		Status: ConvertStatus(res, kind),
+		Status: ConvertStatus(res),
 		Kind:   kind,
 	}
 }
@@ -169,36 +161,20 @@ func convertNumberInfo(res *checkResponse) *Number {
 	}
 }
 
-//ConvertStatus convert transaction status to common status value
-func ConvertStatus(res *txInfo, kind Kind) string {
-	switch kind {
-	case Cashin:
-		switch strings.ToUpper(res.Data.Transaction.Status) {
-		case pullTs:
-			return "successful"
-		case pullTf:
-			return "failed"
-		case pullTa:
-			return "failed"
-		case pullTip:
-			return "pending"
-		default:
-			return "failed"
-		}
-	case Cashout:
-		switch res.Data.Transaction.Message {
-		case pushTs:
-			return "successful"
-		case pushTf:
-			return "failed"
-		case pushTa:
-			return "failed"
-		case pushTip:
-			return "pending"
-		default:
-			return "failed"
-		}
-	default:
+// ConvertStatus convert transaction status to common status value
+func ConvertStatus(res *txInfo) string {
+
+	switch strings.ToUpper(res.Data.Transaction.Status) {
+	case TxSuccess:
+		return "successful"
+	case TxFailed:
+		return "failed"
+	case TxTerminated:
+		return "failed"
+	case TxPending:
 		return "pending"
+	default:
+		return "failed"
+
 	}
 }
