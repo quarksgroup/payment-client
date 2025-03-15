@@ -14,7 +14,7 @@ import (
 	"github.com/quarksgroup/payment-client/token"
 )
 
-//This is const value for default configuration of airtel client
+// This is const value for default configuration of airtel client
 const (
 	baseUrl        = "https://openapi.airtel.africa"
 	currency       = "RWF"
@@ -32,7 +32,7 @@ type Config struct {
 	Country  string
 }
 
-//This Client all client implentation of airtel.CLient
+// This Client all client implentation of airtel.CLient
 type Client struct {
 	inner        *client.Client
 	TokenSource  token.TokenSource
@@ -143,11 +143,8 @@ func (c *Client) do(ctx context.Context, method, path string, in, out interface{
 	}
 
 	// set the request headers
-
-	if headers != nil {
-		for k, v := range headers {
-			req.Header.Set(k, v[0])
-		}
+	for k, v := range headers {
+		req.Header.Set(k, v[0])
 	}
 
 	if c.inner.UserAgent != "" {
